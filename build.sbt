@@ -3,9 +3,16 @@ import sbt.Process._
 name := "stup-utils"
 
 version := {
-  sbt.Process("git describe --tags").! match {
-    case 0 => sbt.Process("git describe --tags").!!.replaceFirst("-", ".").trim()
-    case _ => "0.0-initVersion"
+  val glatt   = """(\d+\.\d+)""".r
+  val unglatt = """(\d+\.\d+)-(\d+)-.*""".r
+  val ver = sbt.Process("git describe --tags").! match {
+    case 0 => sbt.Process("git describe --tags").!!.trim()
+    case _ => "0.0"
+  }
+  ver match {
+    case unglatt(v1, v2) => s"$v1.$v2"
+    case glatt(t) => s"$t.0"
+    case t => t
   }
 }
 
