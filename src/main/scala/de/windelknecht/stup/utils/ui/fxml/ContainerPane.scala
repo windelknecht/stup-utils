@@ -59,10 +59,17 @@ trait ContainerPane[K] { this: Notify =>
   protected var _containerNode: AnchorPane
   private val _registeredContent = new mutable.HashMap[K, ContentDescr]()
 
+  /**
+   * This is the default fade in animation.
+   */
   private lazy val _fadeIn = new Timeline(
     new KeyFrame(    jxu.Duration.ZERO,                  new KeyValue(_containerNode.opacityProperty(), double2Double(0.0))),
     new KeyFrame(new jxu.Duration(DEFAULT_FADING_SPEED), new KeyValue(_containerNode.opacityProperty(), double2Double(1.0)))
   )
+
+  /**
+   * This is the default fade out animation.
+   */
   private lazy val _fadeOut = new Timeline(
     new KeyFrame(    jxu.Duration.ZERO,                  new KeyValue(_containerNode.opacityProperty(), double2Double(1.0))),
     new KeyFrame(new jxu.Duration(DEFAULT_FADING_SPEED), new KeyValue(_containerNode.opacityProperty(), double2Double(0.0)))
@@ -72,11 +79,80 @@ trait ContainerPane[K] { this: Notify =>
    * Clear all registered contents.
    */
   def clearContent() {
-    _registeredContent.clear()
+    _registeredContent.synchronized {
+      _registeredContent.clear()
+    }
   }
 
   /**
-   * Add given content to pane and fade in.
+   * Load content ui with given contentKey.
+   *
+   * @param key is the key identifying the ui
+   * @param ui is the ui node to show or hide
+   * @param fadeIn is the animation which is played on activation
+   * @param fadeOut is the animation which is played on deactivation
+   */
+  def loadContent(
+    key: K,
+    ui: FxmlController,
+    fadeIn: Animation = _fadeIn,
+    fadeOut: Animation = _fadeOut
+    ) {
+    _registeredContent.synchronized {
+      _registeredContent += (key -> ContentDescr(ui, fadeIn = fadeIn, fadeOut = fadeOut))
+    }
+
+    if(_containerNode.getChildren.isEmpty)
+      switchToContent(key)
+  }
+
+  /**
+   * unload given content.
+   *
+   * TODO: remove ui
+   */
+  def unloadContent(
+    key: K
+    ) {
+    _registeredContent.synchronized {
+      _registeredContent -= key
+    }
+  }
+
+  /**
+   * Shutdown this ...
+   */
+  def shutdown() {
+    Platform.runLater {
+      _containerNode.setOpacity(0)
+      _containerNode.getChildren.clear()
+    }
+
+    _registeredContent.synchronized {
+      _registeredContent.clear()
+    }
+  }
+
+  /**
+   * Make content with this key active and visible.
+   *
+   * @param key is the key assigned to the content ui
+   */
+  def switchToContent(
+    key: K
+    ) {
+    _registeredContent.get(key) match {
+      case Some(x) => switchTo(key, x)
+      case None    => fireNotify(OnError, (ContainerPaneError.CONTENT_KEY_NOT_REGISTERED, key))
+    }
+  }
+
+  /**
+   * Prepare the ui to be faded in.
+   * (This method must run within the ui context thread)
+   *
+   * 1. remove old content
+   * 2. add new content
    */
   private def prepareContent(
     ui: Node
@@ -92,47 +168,13 @@ trait ContainerPane[K] { this: Notify =>
   }
 
   /**
-   * Load content ui with given contentKey.
-   */
-  def loadContent(
-    contentKey: K,
-    content: FxmlController,
-    fadeIn: Animation = _fadeIn,
-    fadeOut: Animation = _fadeOut
-    ) { _registeredContent += ( contentKey -> ContentDescr(content, fadeIn = fadeIn, fadeOut = fadeOut)) }
-
-  /**
-   * unload given content.
+   * Activate this content.
    *
-   * TODO: remove ui
-   */
-  def unloadContent(contentKey: K) {
-    _registeredContent -= contentKey
-  }
-
-  def shutdown() {
-    Platform.runLater {
-      _containerNode.setOpacity(0)
-      _containerNode.getChildren.clear()
-    }
-    _registeredContent.clear()
-  }
-
-  /**
-   * Activate this content.
-   */
-  def switchToContent(contentKey: K) {
-    _registeredContent.get(contentKey) match {
-      case Some(x) => switchTo(contentKey, x)
-      case None    => fireNotify(OnError, (ContainerPaneError.CONTENT_KEY_NOT_REGISTERED, contentKey))
-    }
-  }
-
-  /**
-   * Activate this content.
+   * @param key is the ui key
+   * @param content is the ui to show
    */
   private def switchTo(
-    contentKey: K,
+    key: K,
     content: ContentDescr
     ) {
     content.ui.youAreGoingActive()
@@ -150,7 +192,7 @@ trait ContainerPane[K] { this: Notify =>
 
             prepareContent(content.ui.baseUINode)
 
-            fireNotify(OnContentActive, contentKey)
+            fireNotify(OnContentActive, key)
             content.ui.youAreActive()
 
             content.fadeIn.play()
@@ -161,7 +203,7 @@ trait ContainerPane[K] { this: Notify =>
       case None =>
         prepareContent(content.ui.baseUINode)
 
-        fireNotify(OnContentActive, contentKey)
+        fireNotify(OnContentActive, key)
         content.ui.youAreActive()
 
         content.fadeIn
