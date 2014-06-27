@@ -24,9 +24,8 @@
 
 package de.windelknecht.stup.utils.ui
 
-import javafx.scene.image.Image
-
 import collection.mutable
+import javafx.scene.image.Image
 
 /**
  * This object loads images and caches them for faster access.
@@ -66,7 +65,7 @@ object ResourceImageLoader
     fileName: String,
     isAResource: Boolean = true,
     isRelativePath: Boolean = true
-    ) = _cache.getOrElseUpdate(fileName, if(isAResource) loadResource(fileName, isRelativePath) else loadImage(fileName, isRelativePath))
+    ) = _cache.getOrElseUpdate(fileName, if(isAResource) loadResource(fileName, isRelativePath) else loadFile(fileName, isRelativePath))
 
   /**
    * Load image from given path.
@@ -77,10 +76,14 @@ object ResourceImageLoader
    *
    * @throws IOException if an I/O exception occurs.
    */
-  private def loadImage(
+  private def loadFile(
     fileName: String,
     isRelativePath: Boolean
-    ) = new Image(if(isRelativePath) buildPath(fileName) else fileName)
+    ) = {
+    trace(s"load file: '$fileName' (isRelativePath=$isRelativePath)")
+
+    new Image(if(isRelativePath) buildPath(fileName) else fileName)
+  }
 
   /**
    * Load image from internal resource stream.
@@ -94,5 +97,9 @@ object ResourceImageLoader
   private def loadResource(
     fileName: String,
     isRelativePath: Boolean
-    ) = new Image(ClassLoader.getSystemResourceAsStream(if(isRelativePath) buildPath(fileName) else fileName))
+    ) = {
+    trace(s"load resource: '$fileName' (isRelativePath=$isRelativePath)")
+
+    new Image(ClassLoader.getSystemResourceAsStream(if(isRelativePath) buildPath(fileName) else fileName))
+  }
 }

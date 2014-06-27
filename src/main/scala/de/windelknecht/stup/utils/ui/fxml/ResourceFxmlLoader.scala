@@ -24,11 +24,10 @@
 
 package de.windelknecht.stup.utils.ui.fxml
 
-import java.io.{ByteArrayInputStream, File, IOException}
+import de.windelknecht.stup.utils.ui.BaseResourceLoader
+import java.io.{ByteArrayInputStream, File}
 import javafx.fxml.FXMLLoader
 import javafx.scene.Node
-
-import de.windelknecht.stup.utils.ui.BaseResourceLoader
 
 /**
  * This object loads fxml files via fxml loader and return controller and view node..
@@ -59,10 +58,14 @@ object ResourceFxmlLoader
     controller: Option[C] = None,
     isAResource: Boolean = true,
     isRelativePath: Boolean = true
-    ): (N, C) = if(isAResource)
-        loadFromResource[N,C](controller = controller, filePath = fileName, isRelativePath = isRelativePath)
-      else
-        loadFromFile[N,C](controller = controller, filePath = fileName, isRelativePath = isRelativePath)
+    ): (N, C) = {
+    trace(s"loading file $fileName (controller=$controller, isAResource=$isAResource, isRelativePath=$isRelativePath)")
+
+    if(isAResource)
+      loadFromResource[N,C](controller = controller, filePath = fileName, isRelativePath = isRelativePath)
+    else
+      loadFromFile[N,C](controller = controller, filePath = fileName, isRelativePath = isRelativePath)
+  }
 
   /**
    * This method loads a fxml string and pass the given controller object.
@@ -77,6 +80,8 @@ object ResourceFxmlLoader
     fxml: String,
     controller: Option[C] = None
     ): (N, C) = {
+    trace(s"loading fxml string (controller=$controller)")
+
     val fxmlLoader = new FXMLLoader()
 
     controller match {
@@ -145,13 +150,7 @@ object ResourceFxmlLoader
       case Some(x) => fxmlLoader.setController(x)
       case None =>
     }
-
-    try {
-      fxmlLoader.load()
-    } catch {
-      case e: IOException =>
-        throw new RuntimeException(e)
-    }
+    fxmlLoader.load()
 
     (fxmlLoader.getRoot.asInstanceOf[N], fxmlLoader.getController.asInstanceOf[C])
   }

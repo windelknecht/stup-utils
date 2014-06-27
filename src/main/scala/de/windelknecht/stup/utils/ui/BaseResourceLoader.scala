@@ -24,6 +24,8 @@
 
 package de.windelknecht.stup.utils.ui
 
+import grizzled.slf4j.Logging
+
 /**
  * This trait is the base for all custom resource loader.
  *
@@ -31,7 +33,8 @@ package de.windelknecht.stup.utils.ui
  * @version %I%, %G%
  * @since 0.1
  */
-trait BaseResourceLoader {
+trait BaseResourceLoader
+  extends Logging {
   // fields
   private var _resourcePath = "."
 
@@ -62,5 +65,7 @@ trait BaseResourceLoader {
     path: String
     ) {
     _resourcePath = path
+
+    trace(s"set base path to '${_resourcePath}'")
   }
 }
