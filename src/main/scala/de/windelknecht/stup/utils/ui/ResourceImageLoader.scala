@@ -24,37 +24,75 @@
 
 package de.windelknecht.stup.utils.ui
 
-import collection.mutable
 import javafx.scene.image.Image
 
+import collection.mutable
+
 /**
- * Created by Me.
- * User: Heiko Blobner
- * Date: 11.09.12
- * Time: 14:48
+ * This object loads images and caches them for faster access.
+ * Don't forget to set the base path. Otherwise all image files
+ * will be prefixed with '.'.
+ *
+ * @author Heiko Blobner <windelknecht@gmail.com>
+ * @version %I%, %G%
+ * @since 0.1
  */
-
-object ResourceImageLoader {
+object ResourceImageLoader
+  extends BaseResourceLoader {
   // fields
-  private var resourcePath = "."
-  private val imageCache = new mutable.HashMap[String, Image]()
+  private val _cache = new mutable.HashMap[String, Image]()
 
-  // methods
-  def isLoaded(path: String) = imageCache.contains(path)
+  /**
+   * Returns true if the given image file is already cached.
+   * 
+   * @param fileName relative path and filename to the image
+   * @return true -> already cached, false -> not cached
+   */
+  def isLoaded(
+    fileName: String
+    ) = _cache.contains(fileName)
 
-  def getImage(path: String): Image = {
-    if (!isLoaded(path))
-      loadImage(path)
+  /**
+   * Load an image or return an already loaded and now cached image.
+   *
+   * @param fileName path to the image file
+   * @param isAResource if true, the image is loaded from internal resource path
+   * @param isRelativePath should be false. if the filename path os absolute
+   * @return loaded image
+   *
+   * @throws IOException if an I/O exception occurs.
+   */
+  def get(
+    fileName: String,
+    isAResource: Boolean = true,
+    isRelativePath: Boolean = true
+    ) = _cache.getOrElseUpdate(fileName, if(isAResource) loadResource(fileName, isRelativePath) else loadImage(fileName, isRelativePath))
 
-    imageCache(path)
-  }
+  /**
+   * Load image from given path.
+   *
+   * @param fileName is the filename of the image
+   * @param isRelativePath should be false. if the filename path os absolute
+   * @return loaded image
+   *
+   * @throws IOException if an I/O exception occurs.
+   */
+  private def loadImage(
+    fileName: String,
+    isRelativePath: Boolean
+    ) = new Image(if(isRelativePath) buildPath(fileName) else fileName)
 
-  def setBasePath(path: String) {
-    resourcePath = if (path.endsWith("/")) path else "%s/".format(path)
-  }
-
-  // private methods
-  private def loadImage(path: String) {
-    imageCache += path -> new Image(ClassLoader.getSystemResourceAsStream(resourcePath + path))
-  }
+  /**
+   * Load image from internal resource stream.
+   *
+   * @param fileName is the filename of the image
+   * @param isRelativePath should be false. if the filename path os absolute
+   * @return loaded image
+   *
+   * @throws IOException if an I/O exception occurs.
+   */
+  private def loadResource(
+    fileName: String,
+    isRelativePath: Boolean
+    ) = new Image(ClassLoader.getSystemResourceAsStream(if(isRelativePath) buildPath(fileName) else fileName))
 }
