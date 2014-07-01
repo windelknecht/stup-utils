@@ -29,15 +29,6 @@ import javafx.geometry.Point2D
 import javafx.scene.input.MouseEvent
 import javafx.scene.{Cursor, Node}
 
-/**
- * Created by Me.
- * User: Heiko Blobner
- * Mail: heiko.blobner@gmx.de
- *
- * Date: 10.04.14
- * Time: 11:48
- *
- */
 trait Draggable {this: Node=>
   // fields
   private var _dragAnchor = Point2D.ZERO
