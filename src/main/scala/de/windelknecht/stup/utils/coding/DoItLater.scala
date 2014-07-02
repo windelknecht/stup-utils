@@ -27,10 +27,10 @@ package de.windelknecht.stup.utils.coding
 import java.awt.event.{ActionEvent, ActionListener}
 import java.util.UUID
 import javax.swing.Timer
-
 import scala.collection.mutable
-import scala.concurrent.Future
 import scala.concurrent.duration.Duration
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 trait DoItLater {
   case class WaitingJob(id: UUID, afterJob: UUID, op: () => Any)

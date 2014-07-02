@@ -24,15 +24,15 @@
 
 package de.windelknecht.stup.utils.ui
 
-import javafx.scene.canvas.Canvas
-import javafx.scene.text.{TextAlignment, Font}
-import javafx.geometry.VPos
-import javafx.scene.paint.{Color, Paint}
-import javafx.scene.SnapshotParameters
-import javafx.scene.image.{WritableImage, Image}
-import java.io.{OutputStream, IOException, File}
-import javafx.embed.swing.SwingFXUtils
+import _root_.javafx.embed.swing.SwingFXUtils
+import _root_.javafx.geometry.VPos
+import _root_.javafx.scene.SnapshotParameters
+import _root_.javafx.scene.canvas.Canvas
+import _root_.javafx.scene.image.{WritableImage, Image}
+import _root_.javafx.scene.paint.{Color, Paint}
+import _root_.javafx.scene.text.{TextAlignment, Font}
 import java.awt.image.BufferedImage
+import java.io.{OutputStream, File, IOException}
 import javax.imageio.ImageIO
 
 object ImageHelper {

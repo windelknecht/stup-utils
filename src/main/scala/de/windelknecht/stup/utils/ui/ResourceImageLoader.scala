@@ -24,8 +24,9 @@
 
 package de.windelknecht.stup.utils.ui
 
+import _root_.javafx.scene.image.Image
+
 import collection.mutable
-import javafx.scene.image.Image
 
 /**
  * This object loads images and caches them for faster access.
