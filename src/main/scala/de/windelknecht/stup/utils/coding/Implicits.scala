@@ -24,6 +24,10 @@
 
 package de.windelknecht.stup.utils.coding
 
+import java.io.File
+
+import org.apache.commons.vfs2.{VFS, FileObject}
+
 object Implicits {
   implicit def anyToOption[T](v: T): Option[T] = Some(v)
 
@@ -41,8 +45,21 @@ object Implicits {
 
   implicit def fun2Runnable(fun: => Unit) = new Runnable { def run() { fun } }
 
+  implicit def toFile(f: FileObject): File = new File(f.getURL.getFile)
+  implicit def toFileObject(f: File): FileObject = VFS.getManager.resolveFile(f, f.getAbsolutePath)
+
   implicit class Regex(sc: StringContext) {
     def r = new util.matching.Regex(sc.parts.mkString, sc.parts.tail.map(_ => "x"): _*)
+  }
+
+  /**
+   * Utils for byte arrays.
+   */
+  implicit class ByteArrayUtils(value: Array[Byte]) {
+    /**
+     * Convert byte array to hex string.
+     */
+    def toHex: String = value.map("%02x" format _).mkString
   }
 
   /**
