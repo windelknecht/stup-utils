@@ -1,3 +1,5 @@
+package de.windelknecht.stup.utils.coding.akka
+
 import akka.actor.{Actor, ActorRef, Terminated}
 import scala.collection.mutable.ArrayBuffer
 

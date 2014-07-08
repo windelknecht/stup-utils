@@ -1,3 +1,5 @@
+package de.windelknecht.stup.utils.coding.akka
+
 /**
  * Code from http://letitcrash.com/post/30165507578/shutdown-patterns-in-akka-2
  *
