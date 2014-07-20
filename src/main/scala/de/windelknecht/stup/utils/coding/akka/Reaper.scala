@@ -13,7 +13,7 @@ object Reaper {
   case class WatchMe(ref: ActorRef)
 }
 
-abstract class Reaper extends Actor {
+trait Reaper extends ChainActor {
   import Reaper._
 
   // Keep track of what we're watching
@@ -24,7 +24,7 @@ abstract class Reaper extends Actor {
   def allSoulsReaped(): Unit
 
   // Watch and check for termination
-  final def receive = {
+  receiver {
     case WatchMe(ref) =>
       context.watch(ref)
       watched += ref
