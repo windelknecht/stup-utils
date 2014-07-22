@@ -34,11 +34,12 @@ import scala.concurrent.Future
 
 trait DoItLater {
   case class WaitingJob(id: UUID, afterJob: UUID, op: () => Any)
+  case class TimedJob(dur: Duration, timer: Timer)
 
   // fields
   private val _runningJobs = new mutable.HashMap[UUID, Future[Any]]
   private val _waitingForOtherJob = new mutable.HashSet[WaitingJob]
-  private val _timedJobs = new mutable.HashMap[UUID, (Duration, Timer)]()
+  private val _timedJobs = new mutable.HashMap[UUID, TimedJob]()
 
   /**
    * Request to run a job asynchron
@@ -85,11 +86,11 @@ trait DoItLater {
     id.synchronized {
       _timedJobs.get(id) match {
         case Some(x) => // ignore, already running
-          x._2.stop()
-          val newTime = time - x._1
-          _timedJobs += (id -> (newTime, createTimedJob(id, newTime, op)))
+          x.timer.stop()
+          val newTime = time - x.dur
+          _timedJobs += (id -> TimedJob(newTime, createTimedJob(id, newTime, op)))
 
-        case None    => _timedJobs += (id -> (time, createTimedJob(id, time, op)))
+        case None    => _timedJobs += (id -> TimedJob(time, createTimedJob(id, time, op)))
       }
     }
     id

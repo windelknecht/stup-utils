@@ -47,8 +47,10 @@ class EventEntpreller(
   notifier: NotifyRx
   )
   extends Notify {
+  case class TimerData(timer: Timer, Data: Any)
+
   // fields
-  private val _eventToTimer = new mutable.HashMap[AnyRef, (Timer, Any)]()
+  private val _eventToTimer = new mutable.HashMap[AnyRef, TimerData]()
 
   // ctor
   registerNotify(Some(notifier))
@@ -70,7 +72,7 @@ class EventEntpreller(
    * Shutdown everything.
    */
   def shutdown() = {
-    _eventToTimer.foreach(_._2._1.stop())
+    _eventToTimer.foreach(_._2.timer.stop())
   }
 
   /**
@@ -93,7 +95,7 @@ class EventEntpreller(
       }
     })
 
-    _eventToTimer += (evt -> (timer, data))
+    _eventToTimer += (evt -> TimerData(timer, data))
 
     timer.setRepeats(false)
     timer.setInitialDelay(durationInMS.length.toInt)
