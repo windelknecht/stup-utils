@@ -62,9 +62,13 @@ class UnArchiver(
       var entry = in.getNextEntry
       while (entry != null) {
         val file = VFS.getManager.resolveFile(s"${unArchiveTo.getName}/${entry.getName}")
-        file.createFile()
 
-        ChannelTools.fastStreamCopy_doNotCloseInput(entry.getSize, in, file.getContent.getOutputStream(false))
+        if(entry.isDirectory)
+          file.createFolder()
+        else {
+          file.createFile()
+          ChannelTools.fastStreamCopy_doNotCloseInput(entry.getSize, in, file.getContent.getOutputStream(false))
+        }
 
         entry = in.getNextEntry
 
