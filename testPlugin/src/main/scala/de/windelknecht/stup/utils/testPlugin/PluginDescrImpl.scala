@@ -22,10 +22,10 @@
  * SOFTWARE.
  */
 
-package de.windelknecht.stup.utils.coding.plugin
+package de.windelknecht.stup.utils.testPlugin
 
-import akka.actor.ActorSystem
-import de.windelknecht.stup.utils.coding.plugin.PluginManager.AddPlugin
+import de.windelknecht.stup.utils.coding.Version
+import de.windelknecht.stup.utils.coding.plugin.PluginDescr
 
 /**
  * Created by Me.
@@ -33,16 +33,51 @@ import de.windelknecht.stup.utils.coding.plugin.PluginManager.AddPlugin
  * Mail: heiko.blobner@gmx.de
  *
  * Date: 23.07.14
- * Time: 13:39
+ * Time: 13:51
  *
  */
-object Runner {
-  def main(args: Array[String]) {
-    implicit val actorSystem = ActorSystem("pluginRunner")
+class PluginDescrImpl
+  extends PluginDescr {
+  /**
+   * Defines the version of the main application the plugin is compiled against.
+   * The app can now decide if this plugin should work or not (maybe api changes)
+   *
+   * @return the version information
+   */
+  override def compiledAgainst = Version(0, 0, 1)
 
-    val pm = PluginManager()
+  /**
+   * Plugin description
+   *
+   * @return plugin description
+   */
+  override def description = "descr"
 
-    pm ! AddPlugin("/home/hblobner/Work/Projects/scala/stup-utils/testPlugin/target/scala-2.11/testplugin_2.11-0.1.20.jar")
+  /**
+   * Plugin name.
+   *
+   * @return the name of this plugin
+   */
+  override def name = "name"
 
-  }
+  /**
+   * Plugin author.
+   *
+   * @return author name
+   */
+  override def author = "author"
+
+  /**
+   * Author email address..
+   *
+   * @return author email address
+   */
+  override def email = "email"
+
+  /**
+   * Plugin version.
+   *
+   * @return version of this plugin
+   */
+  override def version = Version(0, 0, 1)
 }

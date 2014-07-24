@@ -22,10 +22,9 @@
  * SOFTWARE.
  */
 
-package de.windelknecht.stup.utils.testPlugin
+package de.windelknecht.stup.utils.coding.plugin
 
 import de.windelknecht.stup.utils.coding.Version
-import de.windelknecht.stup.utils.coding.plugin.Plugin
 
 /**
  * Created by Me.
@@ -33,51 +32,50 @@ import de.windelknecht.stup.utils.coding.plugin.Plugin
  * Mail: heiko.blobner@gmx.de
  *
  * Date: 23.07.14
- * Time: 13:51
+ * Time: 13:33
  *
  */
-class PluginImpl
-  extends Plugin {
+trait PluginDescr {
   /**
    * Defines the version of the main application the plugin is compiled against.
    * The app can now decide if this plugin should work or not (maybe api changes)
    *
    * @return the version information
    */
-  override def compiledAgainst = Version(0, 0, 1)
+  def compiledAgainst: Version
 
   /**
    * Plugin description
    *
    * @return plugin description
    */
-  override def description = "descr"
+  def description: String
 
   /**
    * Plugin name.
    *
    * @return the name of this plugin
    */
-  override def name = "name"
+  def name: String
 
   /**
    * Plugin author.
    *
    * @return author name
    */
-  override def author = "author"
+  def author: String
 
   /**
    * Author email address..
    *
    * @return author email address
    */
-  override def email = "email"
+  def email: String
 
   /**
    * Plugin version.
    *
    * @return version of this plugin
    */
-  override def version = Version(0, 0, 1)
+  def version: Version
 }

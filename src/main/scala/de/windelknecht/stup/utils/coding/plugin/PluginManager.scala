@@ -25,7 +25,7 @@
 package de.windelknecht.stup.utils.coding.plugin
 
 import akka.actor.{Props, ActorSystem, Actor}
-import de.windelknecht.stup.utils.coding.plugin.PluginHandler.{PluginDescrNotLoaded, PluginDescrLoaded, OnPluginDescrInfo}
+import de.windelknecht.stup.utils.coding.plugin.Plugin.{PluginDescrNotLoaded, PluginDescrLoaded, OnPluginDescrInfo}
 import de.windelknecht.stup.utils.coding.plugin.PluginManager._
 import de.windelknecht.stup.utils.coding.reactive.Notify
 import de.windelknecht.stup.utils.coding.reactive.Notify._
@@ -50,8 +50,8 @@ object PluginManager {
   trait pmReq extends pmMsg
   trait pmRes extends pmMsg
 
-  case class PluginLoaded   (plugin: PluginHandler)              extends pmRes
-  case class PluginNotLoaded(plugin: PluginHandler, err: String) extends pmRes
+  case class PluginLoaded   (plugin: Plugin)              extends pmRes
+  case class PluginNotLoaded(plugin: Plugin, err: String) extends pmRes
 
   case class AddPlugin(file: String)   extends pmReq
   case class AddPluginDir(dir: String) extends pmReq
@@ -66,7 +66,7 @@ class PluginManager
   extends Actor
   with Notify {
   // fields
-  private val _plugins = new mutable.HashMap[FileObject, PluginHandler]()
+  private val _plugins = new mutable.HashMap[FileObject, Plugin]()
 
   /**
    * Actor receive method
@@ -92,9 +92,9 @@ class PluginManager
     file: FileObject
     ) {
     _plugins synchronized {
-      _plugins += (file -> new PluginHandler(file, notify = Some({
-        case (OnPluginDescrInfo, PluginDescrLoaded,         plugin: PluginHandler) +++ _ => fireNotify(OnPluginChanged, PluginLoaded(plugin))
-        case (OnPluginDescrInfo, PluginDescrNotLoaded(err), plugin: PluginHandler) +++ _ => fireNotify(OnPluginChanged, PluginNotLoaded(plugin, err))
+      _plugins += (file -> new Plugin(file, notify = Some({
+        case (OnPluginDescrInfo, PluginDescrLoaded,         plugin: Plugin) +++ _ => fireNotify(OnPluginChanged, PluginLoaded(plugin))
+        case (OnPluginDescrInfo, PluginDescrNotLoaded(err), plugin: Plugin) +++ _ => fireNotify(OnPluginChanged, PluginNotLoaded(plugin, err))
       })))
     }
   }
