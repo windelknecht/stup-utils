@@ -127,10 +127,16 @@ trait Notify {
   private val _foreignNotifier = new mutable.HashMap[Notify, List[Any]]()
 
   /**
-   * All events fired by up, will be redirected to the foreign listeners too.
+   * All events fired by this object, will be forwarded to the foreign listeners too.
    * Es kann angegeben werden, welche Events weitergeleitet werden sollen.
+   *
+   * @param notify is the instance all events will redirected too
+   * @param events is a list of event which should be redirected (leave empty to pass all events)
    */
-  def attachForeignNotify(notify: Notify, events: Any*): Notify = {
+  def forward(
+    notify: Notify,
+    events: Any*
+    ): Notify = {
     _foreignNotifier += (notify -> events.toList)
     this
   }
@@ -138,7 +144,7 @@ trait Notify {
   /**
    * Unregister the foreign notify.
    */
-  def detachForeignNotify(notify: Notify): Notify = {
+  def unForward(notify: Notify): Notify = {
     _foreignNotifier -= notify
     this
   }

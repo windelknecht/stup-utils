@@ -233,7 +233,7 @@ class NotifySpec
         val tto = new B
         val foreign = new B
 
-        tto.attachForeignNotify(foreign)
+        tto.forward(foreign)
 
         tto.hasListener should be (right = true)
       }
@@ -277,7 +277,7 @@ class NotifySpec
         val foreign = new B
         var res = "no"
 
-        tto.attachForeignNotify(foreign)
+        tto.forward(foreign)
 
         foreign.registerNotify(UUID.randomUUID(), {
           case (E1, "E1") ++ _ => res = "E1"
@@ -291,7 +291,7 @@ class NotifySpec
         val foreign = new B
         var res = "no"
 
-        tto.attachForeignNotify(foreign, E1, E3)
+        tto.forward(foreign, E1, E3)
 
         foreign.registerNotify(UUID.randomUUID(), {
           case (E1, "E1") ++ _ => res = "E1"
@@ -307,7 +307,7 @@ class NotifySpec
         val foreign = new B
         var res = "no"
 
-        tto.attachForeignNotify(foreign, E1, E3)
+        tto.forward(foreign, E1, E3)
 
         foreign.registerNotify(UUID.randomUUID(), {
           case (E1, "E1") ++ _ => res = "E1"
@@ -323,7 +323,7 @@ class NotifySpec
         val foreign = new B
         var res = "no"
 
-        tto.attachForeignNotify(foreign, E1, E3)
+        tto.forward(foreign, E1, E3)
 
         foreign.registerNotify(UUID.randomUUID(), {
           case (E1, "E1") ++ _ => res = "E1"
@@ -341,8 +341,8 @@ class NotifySpec
         val foreign = new B
         var res = "no"
 
-        tto.attachForeignNotify(foreign)
-        tto.detachForeignNotify(foreign)
+        tto.forward(foreign)
+        tto.unForward(foreign)
 
         foreign.registerNotify(UUID.randomUUID(), {
           case (E1, "E1") ++ _ => res = "E1"
