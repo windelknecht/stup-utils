@@ -133,7 +133,7 @@ trait Notify {
    * @param notify is the instance all events will redirected too
    * @param events is a list of event which should be redirected (leave empty to pass all events)
    */
-  def forward(
+  def forwardEvents(
     notify: Notify,
     events: Any*
     ): Notify = {
@@ -144,7 +144,7 @@ trait Notify {
   /**
    * Unregister the foreign notify.
    */
-  def unForward(notify: Notify): Notify = {
+  def unForwardEvents(notify: Notify): Notify = {
     _foreignNotifier -= notify
     this
   }
