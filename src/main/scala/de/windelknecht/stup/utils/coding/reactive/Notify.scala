@@ -137,7 +137,9 @@ trait Notify {
     notify: Notify,
     events: Any*
     ): Notify = {
-    _foreignNotifier += (notify -> events.toList)
+    _foreignNotifier.synchronized {
+      _foreignNotifier += (notify -> events.toList)
+    }
     this
   }
 
@@ -145,7 +147,9 @@ trait Notify {
    * Unregister the foreign notify.
    */
   def unForwardEvents(notify: Notify): Notify = {
-    _foreignNotifier -= notify
+    _foreignNotifier.synchronized {
+      _foreignNotifier -= notify
+    }
     this
   }
 
@@ -239,7 +243,7 @@ trait Notify {
     id: UUID,
     op: NotifyRx,
     filter: Any*
-    ) {
+    ): Notify = {
     _listener.synchronized {
       val l = ListenerDescr(op, filter.toList)
       _listener += (id -> l)
@@ -251,26 +255,28 @@ trait Notify {
 
       fireNotify(OnListenerChanged, HasListenerAdded)
     }
+    this
   }
-  def registerNotify(n: NotifyOn): Unit = registerNotify(n.id, n.op, n.filter:_*)
-  def registerNotify(op: Option[NotifyRx]): Unit =
+  def registerNotify(n: NotifyOn): Notify = registerNotify(n.id, n.op, n.filter:_*)
+  def registerNotify(op: Option[NotifyRx]): Notify =
     op match {
       case Some(x) => registerNotify(UUID.randomUUID(), x)
-      case None =>
+      case None => this
     }
 
   /**
    * Unregister a notify listener
    * @param id unique listener id
    */
-  def unregisterNotify(id: UUID) {
+  def unregisterNotify(id: UUID): Notify = {
     _listener.synchronized {
       _listener -= id
 
       fireNotify(OnListenerChanged, HasListenerRemoved)
     }
+    this
   }
-  def unregisterNotify(n: NotifyOff): Unit = unregisterNotify(n.id)
+  def unregisterNotify(n: NotifyOff): Notify = unregisterNotify(n.id)
 
   /**
    * This method is used to return the underlying object self reference.
