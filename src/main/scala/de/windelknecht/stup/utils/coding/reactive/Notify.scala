@@ -55,27 +55,35 @@ object Notify {
 
 
   sealed trait NotifyMsg
+  sealed trait NotifyReq extends NotifyMsg
   /**
    * Register a notify listener for an event.
    *
    * @param id unique listener identifier (used to unregister)
    * @param op partial function with case queries
    */
-  case class NotifyOn(id: UUID, op: PartialFunction[OnNotify, Unit], filter: Any*) extends NotifyMsg
+  case class NotifyOn(id: UUID, op: PartialFunction[OnEventFired, Unit], filter: Any*) extends NotifyReq
 
   /**
    * Unregister a listener.
    */
-  case class NotifyOff(id: UUID) extends NotifyMsg
+  case class NotifyOff(id: UUID) extends NotifyReq
 
+  /**
+   * Unregister a listener.
+   */
+  case class ForwardEvents(foreigner: Notify, events: Any*) extends NotifyReq
+
+
+  sealed trait NotifyRes extends NotifyMsg
   /**
    * A new listener is watching this model
    */
-  case object HasListenerAdded extends NotifyMsg
+  case object HasListenerAdded extends NotifyRes
   /**
    * A listener is this not watching anymore. If no more listener is active, it can be freed.
    */
-  case object HasListenerRemoved extends NotifyMsg
+  case object HasListenerRemoved extends NotifyRes
 
 
   /**
@@ -86,22 +94,22 @@ object Notify {
    * @param msg is the message with the information
    * @param count how many times the event is fired
    */
-  case class OnNotify(sender: Any, event: NotifyEvent, msg: Any, count: Int = 1)
+  case class OnEventFired(sender: Any, event: NotifyEvent, msg: Any, count: Int = 1)
 
   /**
    * Object to provide a match-case operation
    */
   object + {
-    def unapply(xs: OnNotify): Option[(NotifyEvent, Int)] = Some((xs.event, xs.count))
+    def unapply(xs: OnEventFired): Option[(NotifyEvent, Int)] = Some((xs.event, xs.count))
   }
   object ++ {
-    def unapply(xs: OnNotify): Option[((NotifyEvent, Any), Int)] = Some(((xs.event, xs.msg), xs.count))
+    def unapply(xs: OnEventFired): Option[((NotifyEvent, Any), Int)] = Some(((xs.event, xs.msg), xs.count))
   }
   object +++ {
-    def unapply(xs: OnNotify): Option[((NotifyEvent, Any, Any), Int)] = Some(((xs.event, xs.msg, xs.sender), xs.count))
+    def unapply(xs: OnEventFired): Option[((NotifyEvent, Any, Any), Int)] = Some(((xs.event, xs.msg, xs.sender), xs.count))
   }
 
-  type NotifyRx = PartialFunction[OnNotify, Unit]
+  type NotifyRx = PartialFunction[OnEventFired, Unit]
 
   /**
    * 1. Param = is the NotifyEvent
@@ -122,7 +130,7 @@ trait Notify {
 
   // fields
   private val _listener        = new mutable.HashMap[UUID, ListenerDescr]()
-  private val _firedEvents     = new mutable.HashMap[NotifyEvent, OnNotify]()
+  private val _firedEvents     = new mutable.HashMap[NotifyEvent, OnEventFired]()
   private val _pendingEvents   = new mutable.HashSet[NotifyEvent]()
   private val _foreignNotifier = new mutable.HashMap[Notify, List[Any]]()
 
@@ -179,8 +187,8 @@ trait Notify {
     msg: Any = Nil
     ) {
     val not = _firedEvents.get(event) match {
-      case Some(x)              => OnNotify(sender = thisRef, event = event, msg = msg, count = x.count + 1)
-      case None                 => OnNotify(sender = thisRef, event = event, msg = msg)
+      case Some(x)              => OnEventFired(sender = thisRef, event = event, msg = msg, count = x.count + 1)
+      case None                 => OnEventFired(sender = thisRef, event = event, msg = msg)
     }
     _firedEvents += (event -> not)
 
@@ -193,7 +201,7 @@ trait Notify {
    */
   private def fireThisEvent(
     listener: ListenerDescr,
-    not: OnNotify
+    not: OnEventFired
   ) {
     if((checkFilterIfEmpty orElse checkFilter orElse checkFilterFail)(not.event, not.msg, listener.filter)) {
       (listener.op orElse handleNot)(not)
@@ -213,15 +221,16 @@ trait Notify {
   /**
    * Handler for unwanted events
    */
-  private def handleNot: PartialFunction[OnNotify, Unit] = { case _ => }
+  private def handleNot: PartialFunction[OnEventFired, Unit] = { case _ => }
 
   /**
    * Method to work to handle register/unregister.
    * This function must be called within actor event handler method.
    */
   def notifyReceive: PartialFunction[Any, Unit] = {
-    case e: NotifyOn  => registerNotify(e)
-    case e: NotifyOff => unregisterNotify(e)
+    case e: NotifyOn                    => registerNotify(e)
+    case e: NotifyOff                   => unregisterNotify(e)
+    case ForwardEvents(foreigner, evts) => forwardEvents(foreigner, evts)
   }
 
   /**
