@@ -59,14 +59,21 @@ object PluginManager {
   /**
    * Create a plugin manager.
    */
-  def apply()(implicit actorSystem: ActorSystem) = actorSystem.actorOf(Props(classOf[PluginManager]))
+  def apply(
+    notify: Option[NotifyRx] = None
+    )(implicit actorSystem: ActorSystem) = actorSystem.actorOf(Props(classOf[PluginManager], notify))
 }
 
-class PluginManager
+class PluginManager(
+  notify: Option[NotifyRx]
+  )
   extends Actor
   with Notify {
   // fields
   private val _plugins = new mutable.HashMap[FileObject, Plugin]()
+
+  // ctor
+  registerNotify(notify)
 
   /**
    * Actor receive method
