@@ -24,13 +24,17 @@
 
 package de.windelknecht.stup.utils.coding
 
-/**
- * Created by Me.
- * User: Heiko Blobner
- * Mail: heiko.blobner@gmx.de
- *
- * Date: 23.07.14
- * Time: 13:42
- *
- */
-case class Version(major: Int, minor: Int, patchLevel: Int)
+import de.windelknecht.stup.utils.coding.Implicits._
+
+object Version {
+  // fields
+  private val r = """(\d+)\.(\d+)-(\d+)""".r
+
+  implicit def fromString(s: String) = s match {
+    case r(mr, mn, pl) => Version(major = mr.asInt().getOrElse(0), minor = mn.asInt().getOrElse(0), patchLevel = pl.asInt().getOrElse(0))
+  }
+}
+
+case class Version(major: Int, minor: Int, patchLevel: Int) {
+  override def toString = s"$major.$minor-$patchLevel"
+}
