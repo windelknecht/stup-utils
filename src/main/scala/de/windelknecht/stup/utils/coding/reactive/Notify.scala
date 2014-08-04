@@ -27,6 +27,8 @@ package de.windelknecht.stup.utils.coding.reactive
 import akka.actor.Actor
 import java.util.UUID
 import scala.collection.mutable
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 /**
  * Usage:
@@ -204,7 +206,9 @@ trait Notify {
     not: OnEventFired
   ) {
     if((checkFilterIfEmpty orElse checkFilter orElse checkFilterFail)(not.event, not.msg, listener.filter)) {
-      (listener.op orElse handleNot)(not)
+      Future {
+        (listener.op orElse handleNot)(not)
+      }
     }
   }
 
