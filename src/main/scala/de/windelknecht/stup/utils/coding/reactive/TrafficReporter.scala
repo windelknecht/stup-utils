@@ -26,54 +26,32 @@ package de.windelknecht.stup.utils.coding.reactive
 
 import de.windelknecht.stup.utils.coding.reactive.Notify.NotifyEvent
 
-object RunLevel {
-  trait RunLevelEvent    extends NotifyEvent
-  case object OnRunLevel extends RunLevelEvent
+object TrafficReporter {
+  trait TrafficEvent    extends NotifyEvent
+  case object OnTraffic extends TrafficEvent
 
   // message classes
-  trait RunLevelMsg
+  trait TrafficMsg
 
   /**
-   * Object is in init phase.
+   * Message received.
    */
-  case object Init                         extends RunLevelMsg
+  case class Rx(msg: Any) extends TrafficMsg
 
   /**
-   * Object is up and ready to work.
+   * Message transmitted.
    */
-  case object Running                      extends RunLevelMsg
-
-  /**
-   * Object is being shut down.
-   */
-  case object BeforeShutdown               extends RunLevelMsg
-
-  /**
-   * Object is shut down.
-   */
-  case class  AfterShutdown(cause: String) extends RunLevelMsg
-
-  /**
-   * Object is in an error state.
-   */
-  case class  Failure(err: String)         extends RunLevelMsg
+  case class Tx(msg: Any) extends TrafficMsg
 }
 
-trait RunLevel {this: Notify=>
-  import RunLevel._
+trait TrafficReporter {this: Notify=>
+  import TrafficReporter._
 
   /**
-   * A few report methods for easier run level notifying.
+   * A few report methods for easier traffic notifying.
    */
-  protected def reportRunLevel(msg: RunLevelMsg) = fireNotify(OnRunLevel, msg)
+  protected def reportTraffic(msg: TrafficMsg) = fireNotify(OnTraffic, msg)
 
-  protected def reportInit          ()                   = reportRunLevel(Init)
-  protected def reportRunning       ()                   = reportRunLevel(Running)
-  protected def reportBeforeShutdown()                   = reportRunLevel(BeforeShutdown)
-  protected def reportAfterShutdown (cause: String = "") = reportRunLevel(AfterShutdown(cause))
-  protected def reportFailure       (err: String = "")   = reportRunLevel(Failure(err))
-
-  // ctor code
-  markThisEventAsPending(OnRunLevel)
-  reportInit()
+  protected def reportTrafficRx(msg: Any) = reportTraffic(Rx(msg))
+  protected def reportTrafficTx(msg: Any) = reportTraffic(Tx(msg))
 }
