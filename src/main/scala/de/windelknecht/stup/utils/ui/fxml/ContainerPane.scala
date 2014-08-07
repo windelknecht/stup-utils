@@ -25,7 +25,8 @@
 package de.windelknecht.stup.utils.ui.fxml
 
 import de.windelknecht.stup.utils.coding.Implicits._
-import de.windelknecht.stup.utils.coding.reactive.Notify
+import de.windelknecht.stup.utils.coding.reactive.ErrorReporter.OnError
+import de.windelknecht.stup.utils.coding.reactive.{ErrorReporter, Notify}
 import de.windelknecht.stup.utils.coding.reactive.Notify.NotifyEvent
 import de.windelknecht.stup.utils.ui.fxml.ContainerPane._
 import javafx.animation.{Animation, KeyFrame, KeyValue, Timeline}
@@ -40,17 +41,13 @@ object ContainerPane {
   sealed trait ContentPaneEvent  extends NotifyEvent
   case object  OnContentActive   extends ContentPaneEvent
   case object  OnContentInactive extends ContentPaneEvent
-  case object  OnError           extends ContentPaneEvent
 }
 
-object ContainerPaneError
-  extends Enumeration {
-  type ContentPaneError = Value
+sealed trait ContainerPaneError
+case class ContentKeyNotRegistered[T](key: T) extends ContainerPaneError
 
-  val CONTENT_KEY_NOT_REGISTERED = Value
-}
-
-trait ContainerPane[K] { this: Notify =>
+trait ContainerPane[K]
+  extends ErrorReporter { this: Notify =>
   case class ContentDescr(ui: FxmlController, fadeIn: Animation, fadeOut: Animation)
 
   // fields
@@ -143,7 +140,7 @@ trait ContainerPane[K] { this: Notify =>
     ) {
     _registeredContent.get(key) match {
       case Some(x) => switchTo(key, x)
-      case None    => fireNotify(OnError, (ContainerPaneError.CONTENT_KEY_NOT_REGISTERED, key))
+      case None    => reportWarningErr(ContentKeyNotRegistered(key))
     }
   }
 
@@ -161,10 +158,10 @@ trait ContainerPane[K] { this: Notify =>
     _containerNode.getChildren.clear()
     _containerNode.getChildren.add(ui)
 
-    AnchorPane.setBottomAnchor(ui, 0)
-    AnchorPane.setLeftAnchor  (ui, 0)
-    AnchorPane.setRightAnchor (ui, 0)
-    AnchorPane.setTopAnchor   (ui, 0)
+    AnchorPane.setBottomAnchor(ui, 0d)
+    AnchorPane.setLeftAnchor  (ui, 0d)
+    AnchorPane.setRightAnchor (ui, 0d)
+    AnchorPane.setTopAnchor   (ui, 0d)
   }
 
   /**
