@@ -43,9 +43,40 @@ trait ChangeReporter {this: Notify=>
   import ChangeReporter._
 
   /**
+   * This method checks if the property value has changed. And in that case an event will be fired.
+   *
+   * @param propName is the name of the property
+   * @param oldValue is the old value
+   * @param newValue is the new value
+   * @tparam T is the value type
+   * @return the new value
+   */
+  protected def checkForChanges[T](
+    propName: String,
+    oldValue: T,
+    newValue: T
+    ): T = {
+    if(oldValue != newValue)
+      reportPropertyChange(propName, oldValue, newValue)
+
+    newValue
+  }
+
+  /**
    * A few report methods for easier change notifying.
    */
   protected def reportChange(msg: ChangeMsg) = fireNotify(OnChange, msg)
 
-  protected def reportPropertyChange(name: String, oldValue: Any, newValue: Any) = reportChange(PropertyChange(name = name, oldValue = oldValue, newValue = newValue))
+  /**
+   * Report a property change.
+   *
+   * @param name is the property name
+   * @param oldValue is the old value
+   * @param newValue is the new value
+   */
+  protected def reportPropertyChange(
+    name: String,
+    oldValue: Any,
+    newValue: Any
+    ) = reportChange(PropertyChange(name = name, oldValue = oldValue, newValue = newValue))
 }
