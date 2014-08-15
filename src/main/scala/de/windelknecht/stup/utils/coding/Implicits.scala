@@ -29,21 +29,22 @@ import java.io.File
 import org.apache.commons.vfs2.{VFS, FileObject}
 
 object Implicits {
-  implicit def anyToOption[T](v: T): Option[T] = Some(v)
+  implicit def toByte(v: Int): Byte = v.toByte
 
-  implicit def intToByte(v: Int): Byte = v.toByte
-  implicit def intToBool(v: Int): Boolean = if(v == 0) false else true
-  implicit def intToLong(v: Int): Long = v.toLong
-  implicit def intToShort(v: Int): Short = v.toShort
-  implicit def intToString(v: Int): String = v.toString
+  implicit def toBool(v: Int): Boolean = if(v == 0) false else true
+  implicit def toBool(v: Short): Boolean = toBool(v.toInt)
+
+  implicit def toLong(v: Int): Long = v.toLong
+  implicit def toShort(v: Int): Short = v.toShort
+  implicit def toString(v: Int): String = v.toString
 
   implicit def toFloat(v: Int): Float = v.toFloat
   implicit def toFloat(v: Long): Float = v.toFloat
 
-  implicit def stringToInt(v: String) = v.toInt
+  implicit def toInt(v: String) = v.toInt
   implicit def toOption[T](v: T): Option[T] = Some(v)
 
-  implicit def fun2Runnable(fun: => Unit) = new Runnable { def run() { fun } }
+  implicit def toRunnable(fun: => Unit) = new Runnable { def run() { fun } }
 
   implicit def toFile(f: FileObject): File = new File(f.getURL.getFile)
   implicit def toFileObject(f: File): FileObject = VFS.getManager.resolveFile(f, f.getAbsolutePath)
