@@ -150,7 +150,12 @@ object ResourceFxmlLoader
       case Some(x) => fxmlLoader.setController(x)
       case None =>
     }
-    fxmlLoader.load()
+
+    try {
+      fxmlLoader.load()
+    } catch {
+      case e: Exception => println(s"failed to load ${fileURL.toString} (err: ${e.getMessage})")
+    }
 
     (fxmlLoader.getRoot.asInstanceOf[N], fxmlLoader.getController.asInstanceOf[C])
   }
