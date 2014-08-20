@@ -39,6 +39,8 @@ object AnnotHelper {
    * @return instance of the annotation
    */
   def findAnnotation[A <: StaticAnnotation, V]()(implicit ta: ru.TypeTag[A], tt: ru.TypeTag[V]): A = {
+    import scala.reflect.runtime.universe._ // sorgt dafür, dass die haessliche 'abstract type pattern reflect.runtime.universe.AssignOrNamedArg is unchecked since it is eliminated by erasure' wegkommt
+
     val annotType = ta.tpe                                                                // get the expected annotation type to match
     val args = tt
       .tpe.typeSymbol.asClass                                                             // get the ClassSymbol for the class we want to check

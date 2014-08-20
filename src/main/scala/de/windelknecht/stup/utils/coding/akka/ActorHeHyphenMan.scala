@@ -55,11 +55,32 @@ object ActorHeHyphenMan {
    */
   def apply[C](
     args: Any*
-    )(implicit classTag: ClassTag[C], actorSystem: ActorSystem): ActorRef = {
-    val props = Props(classTag.runtimeClass, args:_*)
+    )(implicit classTag: ClassTag[C], actorSystem: ActorSystem): ActorRef = ActorHeHyphenMan.create(classTag.runtimeClass, args:_*)
 
-    watchShutdown(actorSystem.actorOf(props, s"${classTag.runtimeClass.getName}_${UUID.randomUUID()}"))
-  }
+  /**
+   * Create a actor ref and registers on the shutdown watcher.
+   *
+   * @param args is passed to newly created actor
+   * @param actorSystem the actor is created within this system
+   * @return ActorRef of our new actor
+   */
+  def create(
+    className: String,
+    args: Any*
+    )(implicit actorSystem: ActorSystem): ActorRef = ActorHeHyphenMan.create(Class.forName(className), args:_*)
+
+  /**
+   * Create a actor ref and registers on the shutdown watcher.
+   *
+   * @param clazz is the actor class
+   * @param args is passed to newly created actor
+   * @param actorSystem the actor is created within this system
+   * @return ActorRef of our new actor
+   */
+  def create(
+    clazz: Class[_],
+    args: Any*
+    )(implicit actorSystem: ActorSystem): ActorRef = watchShutdown(actorSystem.actorOf(Props(clazz, args:_*), s"${clazz.getName}_${UUID.randomUUID()}"))
 
   /**
    * Set actor on watch list. If no actor is alive anymore, the actor system will be shut down.
