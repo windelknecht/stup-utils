@@ -34,7 +34,7 @@ object ChangeReporter {
   trait ChangeMsg
 
   /**
-   * Message received.
+   * Property has changed.
    */
   case class PropertyChange(name: String, oldValue: Any, newValue: Any) extends ChangeMsg
 }

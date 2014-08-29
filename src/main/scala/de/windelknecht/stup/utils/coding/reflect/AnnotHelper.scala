@@ -32,18 +32,20 @@ object AnnotHelper {
    * Find the class file annotation of the given class type.
    * An exception is thrown if the given type is not annotated.
    *
+   * @param tpe type information of the class
    * @param ta type information of the annotation
-   * @param tt type information of the class
    * @tparam A is the type of the annotation to find
-   * @tparam V is the type of the annotated class
    * @return instance of the annotation
    */
-  def findAnnotation[A <: StaticAnnotation, V]()(implicit ta: ru.TypeTag[A], tt: ru.TypeTag[V]): A = {
+  def findAnnotation[A <: StaticAnnotation](
+    tpe: ru.Type
+    )(implicit ta: ru.TypeTag[A]): A = {
     import scala.reflect.runtime.universe._ // sorgt dafür, dass die haessliche 'abstract type pattern reflect.runtime.universe.AssignOrNamedArg is unchecked since it is eliminated by erasure' wegkommt
 
     val annotType = ta.tpe                                                                // get the expected annotation type to match
-    val args = tt
-      .tpe.typeSymbol.asClass                                                             // get the ClassSymbol for the class we want to check
+
+    val args = tpe
+      .typeSymbol.asClass                                                             // get the ClassSymbol for the class we want to check
       .annotations                                                                        // get the list of annotations from the ClassSymbol
       .find(a => a.tree.tpe == annotType)                                                 // find the annotation
       .get.tree.children.tail                                                             // retrieve the args. These are returned as a list of Tree.
@@ -61,4 +63,16 @@ object AnnotHelper {
 
     instance
   }
+
+  /**
+   * Find the class file annotation of the given class type.
+   * An exception is thrown if the given type is not annotated.
+   *
+   * @param ta type information of the annotation
+   * @param tt type information of the class
+   * @tparam A is the type of the annotation to find
+   * @tparam V is the type of the annotated class
+   * @return instance of the annotation
+   */
+  def findAnnotation[A <: StaticAnnotation, V]()(implicit ta: ru.TypeTag[A], tt: ru.TypeTag[V]): A = findAnnotation[A](tt.tpe)
 }
