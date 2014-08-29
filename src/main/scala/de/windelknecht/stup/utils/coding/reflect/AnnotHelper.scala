@@ -29,22 +29,48 @@ import scala.reflect.runtime.{universe => ru}
 
 object AnnotHelper {
   /**
-   * Find annotation of the given type within the list.
+   * Returns true if the list contains the given annotation
    *
    * @param annots list of annotations
    * @param ta type tp find
    * @tparam A type to return
    * @return option of an instantiated annotation
    */
-  def find[A](
+  def contains[A](
+    annots: List[ru.Annotation]
+    )(implicit ta: ru.TypeTag[A]) = {
+    find[A](annots) match {
+      case Some(x) => true
+      case None    => false
+    }
+  }
+
+  /**
+   * Find annotation of the given type within the list and instantiate.
+   *
+   * @param annots list of annotations
+   * @param ta type tp find
+   * @tparam A type to return
+   * @return option of an instantiated annotation
+   */
+  def create[A](
     annots: List[ru.Annotation]
     )(implicit ta: ru.TypeTag[A]): Option[A] = {
-    annots
-      .find(a=> a.tree.tpe == ta.tpe) match {
+    find[A](annots) match {
       case Some(x) => Some(instantiate[A](x))
       case None    => None
     }
   }
+
+  /**
+   * Find annotation of the given type within the list.
+   *
+   * @param annots list of annotations
+   * @param ta type tp find
+   * @tparam A type to return
+   * @return option of the annotation
+   */
+  def find[A](annots: List[ru.Annotation])(implicit ta: ru.TypeTag[A]): Option[ru.Annotation] = annots.find(a=> a.tree.tpe == ta.tpe)
 
   /**
    * Get the class file annotation of the given class type.
@@ -55,9 +81,7 @@ object AnnotHelper {
    * @tparam A is the type of the annotation to find
    * @return instance of the annotation
    */
-  def get[A <: StaticAnnotation](
-    tpe: ru.Type
-    )(implicit ta: ru.TypeTag[A]): A = instantiate(tpe.typeSymbol.asClass.annotations.find(a => a.tree.tpe == ta.tpe).get)
+  def get[A <: StaticAnnotation](tpe: ru.Type)(implicit ta: ru.TypeTag[A]): A = instantiate(tpe.typeSymbol.asClass.annotations.find(a => a.tree.tpe == ta.tpe).get)
 
   /**
    * Get the class file annotation of the given class type.
