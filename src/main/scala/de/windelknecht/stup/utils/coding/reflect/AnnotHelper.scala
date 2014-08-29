@@ -29,7 +29,25 @@ import scala.reflect.runtime.{universe => ru}
 
 object AnnotHelper {
   /**
-   * Find the class file annotation of the given class type.
+   * Find annotation of the given type within the list.
+   *
+   * @param annots list of annotations
+   * @param ta type tp find
+   * @tparam A type to return
+   * @return option of an instantiated annotation
+   */
+  def find[A](
+    annots: List[ru.Annotation]
+    )(implicit ta: ru.TypeTag[A]): Option[A] = {
+    annots
+      .find(a=> a.tree.tpe == ta.tpe) match {
+      case Some(x) => Some(instantiate[A](x))
+      case None    => None
+    }
+  }
+
+  /**
+   * Get the class file annotation of the given class type.
    * An exception is thrown if the given type is not annotated.
    *
    * @param tpe type information of the class
@@ -37,21 +55,43 @@ object AnnotHelper {
    * @tparam A is the type of the annotation to find
    * @return instance of the annotation
    */
-  def findAnnotation[A <: StaticAnnotation](
+  def get[A <: StaticAnnotation](
     tpe: ru.Type
+    )(implicit ta: ru.TypeTag[A]): A = instantiate(tpe.typeSymbol.asClass.annotations.find(a => a.tree.tpe == ta.tpe).get)
+
+  /**
+   * Get the class file annotation of the given class type.
+   * An exception is thrown if the given type is not annotated.
+   *
+   * @param ta type information of the annotation
+   * @param tt type information of the class
+   * @tparam A is the type of the annotation to find
+   * @tparam V is the type of the annotated class
+   * @return instance of the annotation
+   */
+  def get[A <: StaticAnnotation, V]()(implicit ta: ru.TypeTag[A], tt: ru.TypeTag[V]): A = get[A](tt.tpe)
+
+  /**
+   * Instantiate the given annotation
+   *
+   * @param annot the AnnotationInfo
+   * @param ta annotation type
+   * @tparam A generic type
+   * @return instantiated
+   */
+  def instantiate[A](
+    annot: ru.Annotation
     )(implicit ta: ru.TypeTag[A]): A = {
     import scala.reflect.runtime.universe._ // sorgt dafür, dass die haessliche 'abstract type pattern reflect.runtime.universe.AssignOrNamedArg is unchecked since it is eliminated by erasure' wegkommt
 
+    require(annot.tree.tpe == ta.tpe, "passed argument does not match generic annotation type")
+
     val annotType = ta.tpe                                                                // get the expected annotation type to match
 
-    val args = tpe
-      .typeSymbol.asClass                                                             // get the ClassSymbol for the class we want to check
-      .annotations                                                                        // get the list of annotations from the ClassSymbol
-      .find(a => a.tree.tpe == annotType)                                                 // find the annotation
-      .get.tree.children.tail                                                             // retrieve the args. These are returned as a list of Tree.
+    val args = annot
+      .tree.children.tail                                                                 // retrieve the args. These are returned as a list of Tree.
       .collect{                                                                           // convert list of Tree to list of argument values
-        case ru.Literal(ru.Constant(m: String)) => m
-        case ru.Literal(ru.Constant(m: Boolean)) => m
+        case ru.Literal(ru.Constant(m)) => m
       }
 
     val runtimeMirror = ru.runtimeMirror(this.getClass.getClassLoader)                    // get runtimeMirror
@@ -63,16 +103,4 @@ object AnnotHelper {
 
     instance
   }
-
-  /**
-   * Find the class file annotation of the given class type.
-   * An exception is thrown if the given type is not annotated.
-   *
-   * @param ta type information of the annotation
-   * @param tt type information of the class
-   * @tparam A is the type of the annotation to find
-   * @tparam V is the type of the annotated class
-   * @return instance of the annotation
-   */
-  def findAnnotation[A <: StaticAnnotation, V]()(implicit ta: ru.TypeTag[A], tt: ru.TypeTag[V]): A = findAnnotation[A](tt.tpe)
 }
