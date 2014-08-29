@@ -29,6 +29,42 @@ import scala.reflect.runtime.{universe => ru}
 
 object AnnotHelper {
   /**
+   * Comfortable class for working with a list of annotations.
+   *
+   * @param annots is a list of annotation
+   */
+  implicit class AnnotListHelper(
+    annots: List[ru.Annotation]
+    ) {
+    /**
+     * Returns true if the list contains the given annotation
+     *
+     * @param ta type tp find
+     * @tparam A type to return
+     * @return option of an instantiated annotation
+     */
+    def contains[A]()(implicit ta: ru.TypeTag[A]) = AnnotHelper.contains(annots)
+
+    /**
+     * Find annotation of the given type within the list and instantiate.
+     *
+     * @param ta type tp find
+     * @tparam A type to return
+     * @return option of an instantiated annotation
+     */
+    def create[A]()(implicit ta: ru.TypeTag[A]) = AnnotHelper.create(annots)
+
+    /**
+     * Find annotation of the given type within the list.
+     *
+     * @param ta type tp find
+     * @tparam A type to return
+     * @return option of the annotation
+     */
+    def find[A]()(implicit ta: ru.TypeTag[A]) = AnnotHelper.find(annots)
+  }
+
+  /**
    * Returns true if the list contains the given annotation
    *
    * @param annots list of annotations
