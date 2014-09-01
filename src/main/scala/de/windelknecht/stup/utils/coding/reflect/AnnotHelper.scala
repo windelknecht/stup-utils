@@ -43,16 +43,7 @@ object AnnotHelper {
      * @tparam A type to return
      * @return option of an instantiated annotation
      */
-    def contains[A]()(implicit ta: ru.TypeTag[A]) = AnnotHelper.contains(annots)
-
-    /**
-     * Find annotation of the given type within the list and instantiate.
-     *
-     * @param ta type tp find
-     * @tparam A type to return
-     * @return option of an instantiated annotation
-     */
-    def create[A]()(implicit ta: ru.TypeTag[A]) = AnnotHelper.create(annots)
+    def containsAnnot[A]()(implicit ta: ru.TypeTag[A]) = AnnotHelper.contains(annots)
 
     /**
      * Find annotation of the given type within the list.
@@ -61,7 +52,7 @@ object AnnotHelper {
      * @tparam A type to return
      * @return option of the annotation
      */
-    def find[A]()(implicit ta: ru.TypeTag[A]) = AnnotHelper.find(annots)
+    def findAnnot[A]()(implicit ta: ru.TypeTag[A]) = AnnotHelper.find(annots)
 
     /**
      * Find annotation of the given type within the list and instantiate.
@@ -70,7 +61,7 @@ object AnnotHelper {
      * @tparam A type to return
      * @return option of an instantiated annotation
      */
-    def get[A]()(implicit ta: ru.TypeTag[A]) = create[A]()
+    def getAnnot[A]()(implicit ta: ru.TypeTag[A]) = create[A]()
   }
 
   /**
