@@ -61,7 +61,7 @@ object AnnotHelper {
      * @tparam A type to return
      * @return option of an instantiated annotation
      */
-    def getAnnot[A]()(implicit ta: ru.TypeTag[A]) = create[A]()
+    def getAnnot[A]()(implicit ta: ru.TypeTag[A]) = AnnotHelper.create[A](annots)
   }
 
   /**
