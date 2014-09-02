@@ -62,6 +62,15 @@ object AnnotHelper {
      * @return option of an instantiated annotation
      */
     def getAnnot[A]()(implicit ta: ru.TypeTag[A]) = AnnotHelper.create[A](annots)
+
+    /**
+     * Return true if one of the given annotations is derived from the wanted type.
+     *
+     * @param typeTag type info of the wanted super class
+     * @tparam A generic info
+     * @return true if on of the annotations has A as its super class
+     */
+    def isDerivedFrom[A]()(implicit typeTag: ru.TypeTag[A]): Boolean = AnnotHelper.isDerivedFrom[A](annots)
   }
 
   /**
@@ -163,4 +172,34 @@ object AnnotHelper {
 
     instance
   }
+
+  /**
+   * Return true if one of the given annotations is derived from the wanted type.
+   *
+   * @param annots list of annotations
+   * @param typeTag type info of the wanted super class
+   * @tparam A generic info
+   * @return true if on of the annotations has A as its super class
+   */
+  def isDerivedFrom[A](
+    annots: List[ru.Annotation]
+    )(implicit typeTag: ru.TypeTag[A]): Boolean = {
+    annots
+      .flatMap(_.tree.tpe.baseClasses) // get all base classes of this annotation
+      .distinct                        // remove duplicates
+      .find(isSameClass[A])            // try to find the type we want
+      .nonEmpty                        // exists searched type?
+  }
+
+  /**
+   * Returns true if the symbol is the same class like the generic type parameter.
+   *
+   * @param symbol to check
+   * @param typeTag type info
+   * @tparam A type to match
+   * @return true is symbol is the same class like A
+   */
+  def isSameClass[A](
+    symbol: ru.Symbol
+    )(implicit typeTag: ru.TypeTag[A]): Boolean = symbol.asType.toType == typeTag.tpe
 }
