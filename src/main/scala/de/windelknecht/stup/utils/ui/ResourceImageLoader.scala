@@ -43,14 +43,29 @@ object ResourceImageLoader
   private val _cache = new mutable.HashMap[String, Image]()
 
   /**
+   * Put given image into cache
+   *
+   * @param ident is the ident key
+   * @param image is the image itself
+   * @return the passed image
+   */
+  def cacheImage(
+    ident: String,
+    image: Image
+    ): Image = {
+    _cache += (ident -> image)
+    image
+  }
+
+  /**
    * Returns true if the given image file is already cached.
    * 
-   * @param fileName relative path and filename to the image
+   * @param ident is the image ident key
    * @return true -> already cached, false -> not cached
    */
   def isLoaded(
-    fileName: String
-    ) = _cache.contains(fileName)
+    ident: String
+    ) = _cache.contains(ident)
 
   /**
    * Load an image or return an already loaded and now cached image.
