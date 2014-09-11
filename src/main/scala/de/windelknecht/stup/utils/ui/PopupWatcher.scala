@@ -9,10 +9,12 @@ package de.windelknecht.stup.utils.ui
  * Time: 21:41
  */
 object PopupWatcher {
-  type PopupHideFunc[T] = { def hide(): Unit; def show(arg: T): Unit }
+//  type PopupHideFunc[T] = { def hide(): Unit; def show[T](arg: T): Unit }
+  type PopupHideFunc = { def hide(): Unit; def show[T](arg: T): Unit }
 
   // fields
-  private var _activePopup: Option[PopupHideFunc[_]] = None
+  private var _activePopup: Option[PopupHideFunc] = None
+//  private var _activePopup: Option[PopupHideFunc[_]] = None
 
   /**
    * Close currently open popup.
@@ -22,7 +24,8 @@ object PopupWatcher {
   /**
    * Activate the given popup.
    */
-  def show[T](popup: PopupHideFunc[T], arg: T): Unit = {
+//  def show[T](popup: PopupHideFunc[T], arg: T): Unit = {
+  def show[T](popup: PopupHideFunc, arg: T): Unit = {
     synchronized {
       hide()
       _activePopup = Some(popup)
