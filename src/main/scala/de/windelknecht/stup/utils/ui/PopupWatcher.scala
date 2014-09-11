@@ -9,10 +9,8 @@ package de.windelknecht.stup.utils.ui
  * Time: 21:41
  */
 object PopupWatcher {
-  type PopupHideFunc = { def hide(): Unit; def show(arg: Any): Unit }
-
   // fields
-  private var _activePopup: Option[PopupHideFunc] = None
+  private var _activePopup: Option[() => Unit] = None
 
   /**
    * Close currently open popup.
@@ -22,11 +20,11 @@ object PopupWatcher {
   /**
    * Activate the given popup.
    */
-  def show(popup: PopupHideFunc, arg: Any): Unit = {
+  def show(showFn: () => Unit, hideFn: () => Unit): Unit = {
     synchronized {
       hide()
-      _activePopup = Some(popup)
-      popup.show(arg)
+      _activePopup = Some(hideFn)
+      showFn()
     }
   }
 
@@ -37,7 +35,7 @@ object PopupWatcher {
    */
   private def hide(): Unit = {
     _activePopup match {
-      case Some(x) => x.hide()
+      case Some(x) => x()
       case None =>
     }
     _activePopup = None
