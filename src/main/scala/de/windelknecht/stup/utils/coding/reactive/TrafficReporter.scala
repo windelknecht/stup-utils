@@ -24,6 +24,8 @@
 
 package de.windelknecht.stup.utils.coding.reactive
 
+import java.time.Instant
+
 import de.windelknecht.stup.utils.coding.reactive.Notify.NotifyEvent
 
 object TrafficReporter {
@@ -36,12 +38,12 @@ object TrafficReporter {
   /**
    * Message received.
    */
-  case class Rx(msg: Any) extends TrafficMsg
+  case class Rx(msg: Any, timeStamp: Instant) extends TrafficMsg
 
   /**
    * Message transmitted.
    */
-  case class Tx(msg: Any) extends TrafficMsg
+  case class Tx(msg: Any, timeStamp: Instant) extends TrafficMsg
 }
 
 trait TrafficReporter {this: Notify=>
@@ -52,6 +54,6 @@ trait TrafficReporter {this: Notify=>
    */
   protected def reportTraffic(msg: TrafficMsg) = fireNotify(OnTraffic, msg)
 
-  protected def reportTrafficRx(msg: Any) = reportTraffic(Rx(msg))
-  protected def reportTrafficTx(msg: Any) = reportTraffic(Tx(msg))
+  protected def reportTrafficRx(msg: Any) = reportTraffic(Rx(msg, Instant.now()))
+  protected def reportTrafficTx(msg: Any) = reportTraffic(Tx(msg, Instant.now()))
 }
