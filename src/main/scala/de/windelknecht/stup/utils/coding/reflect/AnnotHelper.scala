@@ -126,7 +126,12 @@ object AnnotHelper {
    * @tparam A is the type of the annotation to find
    * @return instance of the annotation
    */
-  def get[A <: StaticAnnotation](tpe: ru.Type)(implicit ta: ru.TypeTag[A]): A = instantiate(tpe.typeSymbol.asClass.annotations.find(a => a.tree.tpe == ta.tpe).get)
+  def get[A <: StaticAnnotation](tpe: ru.Type)(implicit ta: ru.TypeTag[A]): A = {
+    find[A](tpe.typeSymbol.asClass.annotations) match {
+      case Some(x) => instantiate(x)
+      case None    => throw new IllegalArgumentException(s"$tpe has no annotation of type ${ta.tpe}")
+    }
+  }
 
   /**
    * Get the class file annotation of the given class type.
