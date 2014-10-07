@@ -1,9 +1,9 @@
-package de.pintono.stup.coding.pipes
+package de.windelknecht.stup.utils.coding.pipes
 
 import java.util.UUID
 import scala.collection.mutable
-import de.pintono.stup.coding.pipes.PipeNode.{PipeDisconnected, PipeConnected}
-import de.pintono.stup.coding.pipes.PipeOwner.{PipeNotifier, OnValueReceive, OnConnectionChanged, OnPipeChange}
+import de.windelknecht.stup.utils.coding.pipes.PipeNode.{PipeDisconnected, PipeConnected}
+import de.windelknecht.stup.utils.coding.pipes.PipeOwner.{PipeNotifier, OnValueReceive, OnConnectionChanged, OnPipeChange}
 
 /**
  * Created by Me.

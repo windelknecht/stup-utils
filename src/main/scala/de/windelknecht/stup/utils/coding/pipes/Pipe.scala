@@ -1,7 +1,7 @@
-package de.pintono.stup.coding.pipes
+package de.windelknecht.stup.utils.coding.pipes
 
 import akka.actor.{Props, ActorSystem, Actor}
-import de.pintono.stup.coding.pipes.Pipe.PipeTerminated
+import de.windelknecht.stup.utils.coding.pipes.Pipe.PipeTerminated
 
 object Pipe {
   private[pipes] val pipeSystem = ActorSystem("pipesystem")

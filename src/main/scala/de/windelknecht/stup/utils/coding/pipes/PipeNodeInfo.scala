@@ -1,4 +1,4 @@
-package de.pintono.stup.coding.pipes
+package de.windelknecht.stup.utils.coding.pipes
 
 import java.util.UUID
 import scala.reflect.ClassTag

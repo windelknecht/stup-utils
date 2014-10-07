@@ -1,7 +1,7 @@
-package de.pintono.stup.coding.pipes
+package de.windelknecht.stup.utils.coding.pipes
 
-import de.pintono.stup.coding.pipes.PipeNode.{PipeDisconnected, PipeConnected}
-import de.pintono.stup.coding.pipes.PipeOwner.PipeNotifier
+import de.windelknecht.stup.utils.coding.pipes.PipeNode.{PipeDisconnected, PipeConnected}
+import de.windelknecht.stup.utils.coding.pipes.PipeOwner.PipeNotifier
 
 /**
  * Created by Me.

@@ -1,6 +1,6 @@
-package de.pintono.stup.coding.pipes
+package de.windelknecht.stup.utils.coding.pipes
 
-import de.pintono.stup.coding.pipes.PipeNode.{PipeConnected, PipeDisconnected, PipeRx}
+import de.windelknecht.stup.utils.coding.pipes.PipeNode.{PipeConnected, PipeDisconnected, PipeRx}
 
 /**
  * Created by Me.

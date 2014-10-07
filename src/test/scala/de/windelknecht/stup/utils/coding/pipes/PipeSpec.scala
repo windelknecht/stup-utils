@@ -1,4 +1,4 @@
-package de.pintono.stup.coding.pipes
+package de.windelknecht.stup.utils.coding.pipes
 
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 import akka.testkit.{ImplicitSender, DefaultTimeout, TestKit}
@@ -6,7 +6,7 @@ import akka.actor.ActorSystem
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.reflect.ClassTag
-import de.pintono.stup.coding.pipes.PipeNode.PipeConnected
+import de.windelknecht.stup.utils.coding.pipes.PipeNode.PipeConnected
 
 /**
  * Created by Me.
