@@ -41,20 +41,27 @@ trait DoItLater {
   private val _waitingForOtherJob = new mutable.HashSet[WaitingJob]
   private val _timedJobs = new mutable.HashMap[UUID, TimedJob]()
 
+  doIt {
+    println()
+  }
+
+  /**
+   * Request to run a job asynchron
+   */
+  protected def doIt(op: => Any): UUID = doIt(UUID.randomUUID())(op)
+
   /**
    * Request to run a job asynchron
    */
   protected def doIt(
-    id: UUID = UUID.randomUUID()
+    id: UUID
     )(op: => Any): UUID = {
-    val fut = Future {
-      op
-      cleanUp(id)
-    }
-
     id.synchronized {
       _runningJobs.synchronized {
-        _runningJobs += (id -> fut)
+        _runningJobs += (id ->  Future {
+          op
+          cleanUp(id)
+        })
       }
     }
     id
