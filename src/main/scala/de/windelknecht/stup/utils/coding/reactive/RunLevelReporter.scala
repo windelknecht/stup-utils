@@ -36,27 +36,27 @@ object RunLevelReporter {
   /**
    * Object is in init phase.
    */
-  case object Init                         extends RunLevelMsg
+  case object Init                      extends RunLevelMsg
 
   /**
    * Object is up and ready to work.
    */
-  case object Running                      extends RunLevelMsg
+  case object Running                   extends RunLevelMsg
 
   /**
    * Object is being shut down.
    */
-  case object BeforeShutdown               extends RunLevelMsg
+  case object BeforeShutdown            extends RunLevelMsg
 
   /**
    * Object is shut down.
    */
-  case class  AfterShutdown(cause: String) extends RunLevelMsg
+  case class  AfterShutdown(cause: Any) extends RunLevelMsg
 
   /**
    * Object is in an error state.
    */
-  case class  Failure(err: String)         extends RunLevelMsg
+  case class  Failure(cause: Any)       extends RunLevelMsg
 }
 
 trait RunLevelReporter {this: Notify=>
@@ -67,11 +67,11 @@ trait RunLevelReporter {this: Notify=>
    */
   protected def reportRunLevel(msg: RunLevelMsg) = fireNotify(OnRunLevel, msg)
 
-  protected def reportRunLevelInit          ()                   = reportRunLevel(Init)
-  protected def reportRunLevelRunning       ()                   = reportRunLevel(Running)
-  protected def reportRunLevelBeforeShutdown()                   = reportRunLevel(BeforeShutdown)
-  protected def reportRunLevelAfterShutdown (cause: String = "") = reportRunLevel(AfterShutdown(cause))
-  protected def reportRunLevelFailure       (err: String = "")   = reportRunLevel(Failure(err))
+  protected def reportRunLevelInit          ()                = reportRunLevel(Init)
+  protected def reportRunLevelRunning       ()                = reportRunLevel(Running)
+  protected def reportRunLevelBeforeShutdown()                = reportRunLevel(BeforeShutdown)
+  protected def reportRunLevelAfterShutdown (cause: Any = "") = reportRunLevel(AfterShutdown(cause))
+  protected def reportRunLevelFailure       (cause: Any = "") = reportRunLevel(Failure(cause))
 
   // ctor code
   markThisEventAsPending(OnRunLevel)
