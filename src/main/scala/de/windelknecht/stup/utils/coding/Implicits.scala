@@ -114,6 +114,13 @@ object Implicits {
    * Utils for string value.
    */
   implicit class StringUtils(value: String) {
+    def asBoolean(): Boolean = {
+      value.toLowerCase match {
+        case "true" => true
+        case _ => false
+      }
+    }
+
     /**
      * Try to convert from string to int and return as Option[Int]:
      *
