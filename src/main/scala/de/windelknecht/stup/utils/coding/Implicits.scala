@@ -114,10 +114,12 @@ object Implicits {
    * Utils for string value.
    */
   implicit class StringUtils(value: String) {
-    def asBoolean(): Boolean = {
+    def asBoolean(): Option[Boolean] = {
       value.toLowerCase match {
-        case "true" => true
-        case _ => false
+        case "true" => Some(true)
+        case "false" => Some(false)
+
+        case _ => None
       }
     }
 
