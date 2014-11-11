@@ -41,10 +41,6 @@ trait DoItLater {
   private val _waitingForOtherJob = new mutable.HashSet[WaitingJob]
   private val _timedJobs = new mutable.HashMap[UUID, TimedJob]()
 
-  doIt {
-    println()
-  }
-
   /**
    * Request to run a job asynchron
    */
