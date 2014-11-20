@@ -225,7 +225,7 @@ trait Notify {
   /**
    * Handler for unwanted events
    */
-  private def handleNot: PartialFunction[OnEventFired, Unit] = { case _ => }
+  protected def handleNot: PartialFunction[OnEventFired, Unit] = { case _ => }
 
   /**
    * Method to work to handle register/unregister.

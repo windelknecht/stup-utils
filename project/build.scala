@@ -2,7 +2,7 @@ import sbt._
 import Keys._
 
 object build extends Build {
-  lazy val scalaVer = "2.11.2"
+  lazy val scalaVer = "2.11.4"
 
   lazy val defaultSettings =
     Seq(
@@ -27,7 +27,7 @@ object build extends Build {
         "org.scala-lang"                % "scala-library"           % scalaVer                  withSources(),
         "org.scala-lang"                % "scala-reflect"           % scalaVer                  withSources(),
         "org.scala-lang.modules"        % "scala-xml_2.11"          % "1.0.2"                   withSources(),
-        "com.typesafe.akka"             % "akka-actor_2.11"         % "2.3.5"                   withSources(),
+        "com.typesafe.akka"             % "akka-actor_2.11"         % "2.3.7"                   withSources(),
         // apache
         "org.apache.commons"            % "commons-compress"        % "1.8.1"                   withSources(),
         "org.apache.commons"            % "commons-vfs2"            % "2.0"                     withSources(),
@@ -37,9 +37,9 @@ object build extends Build {
         "org.reflections"               % "reflections"             % "0.9.9-RC1"               withSources(),
         // testing
         "org.scalatest"                 % "scalatest_2.11"          % "2.2.2"     % "test"      withSources(),
-        "com.typesafe.akka"             % "akka-testkit_2.11"       % "2.3.5"     % "test"      withSources(),
+        "com.typesafe.akka"             % "akka-testkit_2.11"       % "2.3.7"     % "test"      withSources(),
         "junit"                         % "junit"                   % "4.11"      % "test"      withSources(),
-        "org.mockito"                   % "mockito-all"             % "1.9.5"     % "test"      withSources()
+        "org.mockito"                   % "mockito-all"             % "1.10.8"    % "test"      withSources()
       ),
       fork in Test := true
       ))
