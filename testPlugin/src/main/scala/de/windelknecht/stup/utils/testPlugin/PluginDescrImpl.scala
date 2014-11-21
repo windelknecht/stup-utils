@@ -25,7 +25,7 @@
 package de.windelknecht.stup.utils.testPlugin
 
 import de.windelknecht.stup.utils.coding.plugin.PluginDescr
-import de.windelknecht.stup.utils.coding.version.PatchLevelVersion$
+import de.windelknecht.stup.utils.coding.version.{PatchLevelVersion, PatchLevelVersion$}
 
 /**
  * Created by Me.
