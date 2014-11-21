@@ -1,4 +1,4 @@
-package de.windelknecht.stup.utils.coding
+package de.windelknecht.stup.utils.coding.version
 
 import scala.language.implicitConversions
 
@@ -34,7 +34,10 @@ object TwoNumberVersion {
 case class TwoNumberVersion(
   major: Int = 0,
   minor: Int = 0
-  ) extends Ordered[TwoNumberVersion] {
+  )
+  extends Version
+  with Ordered[TwoNumberVersion]
+  {
   /**
    * Result of comparing `this` with operand `that`.
    *

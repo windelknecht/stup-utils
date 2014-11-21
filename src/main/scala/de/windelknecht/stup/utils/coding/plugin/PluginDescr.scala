@@ -24,7 +24,7 @@
 
 package de.windelknecht.stup.utils.coding.plugin
 
-import de.windelknecht.stup.utils.coding.Version
+import de.windelknecht.stup.utils.coding.version.PatchLevelVersion
 
 /**
  * Created by Me.
@@ -42,7 +42,7 @@ trait PluginDescr {
    *
    * @return the version information
    */
-  def compiledAgainst: Version
+  def compiledAgainst: PatchLevelVersion
 
   /**
    * Plugin description
@@ -77,5 +77,5 @@ trait PluginDescr {
    *
    * @return version of this plugin
    */
-  def version: Version
+  def version: PatchLevelVersion
 }

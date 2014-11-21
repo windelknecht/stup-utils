@@ -1,5 +1,6 @@
 package de.windelknecht.stup.utils.coding
 
+import de.windelknecht.stup.utils.coding.version.TwoNumberVersion
 import org.scalatest.{Matchers, WordSpec}
 
 /**

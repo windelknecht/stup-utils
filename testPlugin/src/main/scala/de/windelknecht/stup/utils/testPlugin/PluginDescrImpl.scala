@@ -24,8 +24,8 @@
 
 package de.windelknecht.stup.utils.testPlugin
 
-import de.windelknecht.stup.utils.coding.Version
 import de.windelknecht.stup.utils.coding.plugin.PluginDescr
+import de.windelknecht.stup.utils.coding.version.PatchLevelVersion$
 
 /**
  * Created by Me.
@@ -44,7 +44,7 @@ class PluginDescrImpl
    *
    * @return the version information
    */
-  override def compiledAgainst = Version(0, 0, 1)
+  override def compiledAgainst = PatchLevelVersion(0, 0, 1)
 
   /**
    * Plugin description
@@ -79,5 +79,5 @@ class PluginDescrImpl
    *
    * @return version of this plugin
    */
-  override def version = Version(0, 0, 1)
+  override def version = PatchLevelVersion(0, 0, 1)
 }
