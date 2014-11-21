@@ -147,6 +147,9 @@ trait Notify {
     notify: Notify,
     events: Any*
     ): Notify = {
+    if(notify == null)
+      return notify
+
     _foreignNotifier.synchronized {
       _foreignNotifier += (notify -> events.toList)
     }
