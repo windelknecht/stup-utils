@@ -28,27 +28,44 @@ import de.windelknecht.stup.utils.coding.Implicits._
 
 object PatchLevelVersion {
   // fields
-  private val r = """(\d+)\.(\d+)-(\d+)""".r
+  private val fullVersion_r = """(\d+)\.(\d+)-(\d+)""".r
+  private val majorVersion_r = """(\d+)""".r
+  private val minorVersion_r = """\.(\d+)-(\d+)""".r
 
+  /**
+   * Convert from string to version.
+   */
   implicit def fromString(s: String): PatchLevelVersion = s match {
-    case r(mr, mn, pl) => PatchLevelVersion(major = mr.asInt().getOrElse(0), minor = mn.asInt().getOrElse(0), patchLevel = pl.asInt().getOrElse(0))
+    case fullVersion_r(mr, mn, pl) => PatchLevelVersion(major = mr.asInt().getOrElse(0), minor = mn.asInt().getOrElse(0), patchLevel = pl.asInt().getOrElse(0))
+    case majorVersion_r(mr) => PatchLevelVersion(major = mr.asInt().getOrElse(0), minor = 0, patchLevel = 0)
+    case minorVersion_r(mn, pl) => PatchLevelVersion(major = 0, minor = mn.asInt().getOrElse(0), patchLevel = pl.asInt().getOrElse(0))
+
+    case _ => PatchLevelVersion()
   }
 }
 
 case class PatchLevelVersion(
-  major: Int,
-  minor: Int,
-  patchLevel: Int
+  major: Int = 0,
+  minor: Int = 0,
+  patchLevel: Int = 0
   )
   extends Version
-  with Ordered[PatchLevelVersion]
+  with HasMajorMinor
+  with Ordered[Version]
   {
   /**
    * Result of comparing `this` with operand `that`.
    *
    * Implement this method to determine how instances of A will be sorted.
    */
-  override def compare(that: PatchLevelVersion) = major - that.major + minor - that.minor + patchLevel - that.patchLevel
+  override def compare(that: Version) = {
+    that match {
+      case v: PatchLevelVersion => compareMajorMinor(v) + patchLevel - v.patchLevel
+      case v: TwoNumberVersion  => if (compareMajorMinor(v) == 0) patchLevel else compareMajorMinor(v)
+
+      case _ => 0
+    }
+  }
 
   override def toString = s"$major.$minor-$patchLevel"
 }

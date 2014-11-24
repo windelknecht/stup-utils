@@ -18,10 +18,13 @@ import scala.language.implicitConversions
  * val ver: Version = v1.3
  */
 object TwoNumberVersion {
-  private val fullVersion_r = """v(\d+)\.(\d+)$""".r
-  private val majorVersion_r = """v(\d+)$""".r
-  private val minorVersion_r = """v\.(\d+)$""".r
+  private val fullVersion_r = """(\d+)\.(\d+)$""".r
+  private val majorVersion_r = """(\d+)$""".r
+  private val minorVersion_r = """\.(\d+)$""".r
 
+  /**
+   * Convert from string to version.
+   */
   implicit def toVersion(v: String): TwoNumberVersion = v match {
     case fullVersion_r (major,minor) => new TwoNumberVersion(major = major.toInt, minor = minor.toInt)
     case majorVersion_r(major      ) => new TwoNumberVersion(major = major.toInt                     )
@@ -36,7 +39,8 @@ case class TwoNumberVersion(
   minor: Int = 0
   )
   extends Version
-  with Ordered[TwoNumberVersion]
+  with HasMajorMinor
+  with Ordered[Version]
   {
   /**
    * Result of comparing `this` with operand `that`.
@@ -51,5 +55,14 @@ case class TwoNumberVersion(
    *
    *   - `x > 0` when  `this > that`
    */
-  override def compare(that: TwoNumberVersion) = major - that.major + minor - that.minor
+  override def compare(that: Version) = {
+    that match {
+      case v: PatchLevelVersion => if (compareMajorMinor(v) == 0) -v.patchLevel else compareMajorMinor(v)
+      case v: TwoNumberVersion  => compareMajorMinor(v)
+
+      case _ => 0
+    }
+  }
+
+  override def toString = s"$major.$minor"
 }
