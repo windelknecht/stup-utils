@@ -27,8 +27,7 @@ package de.windelknecht.stup.utils.security
 import java.io.{InputStream, OutputStream}
 import java.nio.ByteBuffer
 import java.nio.channels.Channels
-import javax.crypto.spec.{PBEKeySpec, SecretKeySpec}
-import javax.crypto.{Cipher, SecretKey, SecretKeyFactory}
+import javax.crypto.{Cipher, SecretKey}
 
 import scala.language.implicitConversions
 
@@ -149,67 +148,4 @@ object AESTools {
     inChannel.close()
     outChannel.close()
   }
-
-  /**
-   * Decrypt the given byte array.
-   *
-   * @param key AES key
-   * @param cipherBytes bytes to decrypt
-   * @return decrypted input as byte array
-   */
-  def decrypt(key: SecretKey, cipherBytes: Array[Byte]): Array[Byte] = doCipher(Cipher.DECRYPT_MODE, key, cipherBytes)
-
-  /**
-   * Decrypt the given input.
-   *
-   * @param key AES key
-   * @param in in byte buffer
-   * @return a new created byte buffer with encrypted output
-   */
-  def decrypt(key: SecretKey, in: ByteBuffer): ByteBuffer = doCipher(Cipher.DECRYPT_MODE, key, in)
-
-  /**
-   * Decrypt given clear text with the given key.
-   *
-   * @param key AES key
-   * @param inStream VFS file to encrypt
-   * @param outStream file to write encrypted content into
-   */
-  def decrypt(key: SecretKey, inStream: InputStream, outStream: OutputStream) = doCipher(Cipher.DECRYPT_MODE, key, inStream, outStream)
-
-  /**
-   * Encrypt given clear text with the given key.
-   *
-   * @param key AES key
-   * @param clearBytes bytes to encrypt
-   * @return encrypted input as byte array
-   */
-  def encrypt(key: SecretKey, clearBytes: Array[Byte]): Array[Byte] = doCipher(Cipher.ENCRYPT_MODE, key, clearBytes)
-
-  /**
-   * Encrypt given clear text with the given key.
-   *
-   * @param key AES key
-   * @param clearText string to encrypt
-   * @return encrypted text as byte array
-   */
-  def encrypt(key: SecretKey, clearText: String): Array[Byte] = encrypt(key, clearText.getBytes)
-
-  /**
-   * Encrypt given clear text with the given key.
-   *
-   * @param key AES key
-   * @param in in byte buffer
-   * @return a new created byte buffer with encrypted output
-   */
-  def encrypt(key: SecretKey, in: ByteBuffer): ByteBuffer = doCipher(Cipher.ENCRYPT_MODE, key, in)
-
-  /**
-   * Encrypt given clear text with the given key.
-   *
-   * @param key AES key
-   * @param inStream VFS file to encrypt
-   * @param outStream file to write encrypted content into
-   */
-  def encrypt(key: SecretKey, inStream: InputStream, outStream: OutputStream) = doCipher(Cipher.ENCRYPT_MODE, key, inStream, outStream)
 }
