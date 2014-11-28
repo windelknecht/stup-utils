@@ -1,7 +1,6 @@
 package de.windelknecht.stup.utils.io
 
-import java.io.{OutputStreamWriter, BufferedWriter, PrintWriter}
-import java.nio.charset.Charset
+import java.io.{OutputStreamWriter, PrintWriter}
 import java.nio.file.{FileSystems, Files}
 
 import de.windelknecht.stup.utils.coding.Implicits._

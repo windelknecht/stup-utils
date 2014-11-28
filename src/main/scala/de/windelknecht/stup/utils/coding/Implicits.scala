@@ -124,6 +124,19 @@ object Implicits {
     }
 
     /**
+     * Try to convert from string to double and return as Option[Double]:
+     *
+     * toDouble("10.2").getOrElse(23.0)
+     */
+    def asDouble(): Option[Double] = {
+      try {
+        Some(java.lang.Double.parseDouble(value.replace(',', '.')))
+      } catch {
+        case e: NumberFormatException => None
+      }
+    }
+
+    /**
      * Try to convert from string to int and return as Option[Int]:
      *
      * toInt("102").getOrElse(23)
