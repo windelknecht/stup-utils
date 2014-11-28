@@ -1,6 +1,6 @@
 package de.windelknecht.stup.utils.io
 
-import java.io.{OutputStreamWriter, PrintWriter}
+import java.io._
 import java.nio.file.{FileSystems, Files}
 
 import de.windelknecht.stup.utils.coding.Implicits._
@@ -65,7 +65,7 @@ package object vfs {
      * @param op function to write into a print writer.
      */
     def write(
-      s: String,
+      in: String,
       append: Boolean = false,
       op: (String, PrintWriter) => Unit = writer
       )(implicit codec: Codec) {
@@ -79,11 +79,37 @@ package object vfs {
 
       val p = new PrintWriter(new OutputStreamWriter(file.getContent.getOutputStream(append), codec.charSet))
       try {
-        op(s,p)
+        op(in,p)
       } finally {
         p.close()
       }
     }
+
+    /**
+     * Write something to file.
+     */
+    def writeArray(
+      in: Array[Byte],
+      append: Boolean = false
+      ) {
+      if(!file.exists()) {
+        file.createFile()
+        // rwxr-x---
+        file.setExecutable(true)
+        file.setReadable(true)
+        file.setWritable(true, true) // ownerOnly
+      }
+
+      writeStream(new ByteArrayInputStream(in), append)
+    }
+
+    /**
+     * Write something to file.
+     */
+    def writeStream(
+      is: InputStream,
+      append: Boolean = false
+      ) = ChannelTools.fastStreamCopy(is, file.getContent.getOutputStream(append))
 
     /**
      * Private recursive method to return all childs and child-childs of the given file.

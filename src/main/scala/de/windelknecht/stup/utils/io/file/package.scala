@@ -25,7 +25,7 @@
 package de.windelknecht.stup.utils.io
 
 import de.windelknecht.stup.utils.coding.Implicits._
-import java.io.{File, PrintWriter}
+import java.io._
 import java.nio.file.attribute.PosixFilePermissions
 import java.nio.file.{FileSystems, Files, Paths}
 import scala.io.{Codec, Source}
@@ -111,6 +111,31 @@ package object file {
         p.close()
       }
     }
+
+    /**
+     * Write something to file.
+     */
+    def writeArray(
+      in: Array[Byte],
+      append: Boolean = false
+      ) {
+      if(!file.exists()) {
+        val perms = PosixFilePermissions.fromString("rwxr-x---")
+        val attr = PosixFilePermissions.asFileAttribute(perms)
+        Files.createDirectories(Paths.get(file.getParent), attr)
+        Files.createFile(Paths.get(file.getAbsolutePath), attr)
+      }
+
+      writeStream(new ByteArrayInputStream(in), append)
+    }
+
+    /**
+     * Write something to file.
+     */
+    def writeStream(
+      is: InputStream,
+      append: Boolean = false
+      ) = ChannelTools.fastStreamCopy(is, new FileOutputStream(file))
 
     /**
      * Private recursive method to return all childs and child-childs of the given file.
