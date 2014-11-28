@@ -28,17 +28,8 @@ import de.windelknecht.stup.utils.coding.Implicits._
 import java.io.{File, PrintWriter}
 import java.nio.file.attribute.PosixFilePermissions
 import java.nio.file.{FileSystems, Files, Paths}
-import scala.io.Source
+import scala.io.{Codec, Source}
 
-/**
- * Created by Me.
- * User: Heiko Blobner
- * Mail: heiko.blobner@gmx.de
- *
- * Date: 30.06.14
- * Time: 17:38
- *
- */
 package object file {
   implicit class FileOps(file: File) {
     private val _extRegex = """(.*)\.(.*)$""".r
@@ -81,7 +72,7 @@ package object file {
     /**
      * Read the file.
      */
-    def read() = scala.io.Source.fromFile(file)
+    def read()(implicit codec: Codec) = scala.io.Source.fromFile(file)
 
     /**
      * Return file size as long.
@@ -102,7 +93,10 @@ package object file {
      * Write something to file.
      * @param op function to write into a print writer.
      */
-    def write(s: String, op: (String, PrintWriter) => Unit = writer) {
+    def write(
+      s: String,
+      op: (String, PrintWriter) => Unit = writer
+      )(implicit codec: Codec) {
       if(!file.exists()) {
         val perms = PosixFilePermissions.fromString("rwxr-x---")
         val attr = PosixFilePermissions.asFileAttribute(perms)
@@ -110,7 +104,7 @@ package object file {
         Files.createFile(Paths.get(file.getAbsolutePath), attr)
       }
 
-      val p = new PrintWriter(file)
+      val p = new PrintWriter(file, codec.charSet.name())
       try {
         op(s,p)
       } finally {
