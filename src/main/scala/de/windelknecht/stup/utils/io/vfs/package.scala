@@ -21,6 +21,11 @@ package object vfs {
     def deepFileTree = getDeepFileTree(file)
 
     /**
+     * Return true if the file exists.
+     */
+    def exists = file.exists()
+
+    /**
      * Return extension of this file
      */
     def extension = file.getName.getExtension
@@ -29,6 +34,11 @@ package object vfs {
      * This method scans the given path/file and return all child-child files/directories as a stream.
      */
     def flatFileTree = getFlatFileTree(file)
+
+    /**
+     * Return true if the given file is a directory.
+     */
+    def isDirectory = file.getType == FileType.FOLDER
 
     /**
      * This method scans the given path/file and return all direct child files/directories as a stream.
