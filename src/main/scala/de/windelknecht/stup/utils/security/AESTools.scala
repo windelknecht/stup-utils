@@ -212,36 +212,4 @@ object AESTools {
    * @param outStream file to write encrypted content into
    */
   def encrypt(key: SecretKey, inStream: InputStream, outStream: OutputStream) = doCipher(Cipher.ENCRYPT_MODE, key, inStream, outStream)
-
-  /**
-   * Make a 128 bit AES key form the given passphrase and flavor it with the given salt.
-   *
-   * @param passphrase user pass phrase to generate key from
-   * @param salt use this salt
-   * @param iterations number to iterate key generation
-   * @return AES key
-   */
-  def make128BitAESKey(
-    passphrase: String,
-    salt: String,
-    iterations: Int = 10000
-    ): SecretKey = {
-    /*
-    PBKDF2 is an algorithm specially designed for generating keys from passwords that is considered more secure than a simple SHA1 hash.
-    The salt ensures your encryption won't match another encryption using the same key and cleartext and helps prevent dictionary attacks.
-    The iterations value is an adjustable parameter. Higher values use more computing power, making brute force attacks more difficult.
-     */
-    val key = SecretKeyFactory
-      .getInstance("PBKDF2WithHmacSHA1")
-      .generateSecret(
-        new PBEKeySpec(
-          passphrase.toCharArray,
-          salt.getBytes,
-          iterations,
-          128
-        ))
-      .getEncoded
-
-    new SecretKeySpec(key, "AES")
-  }
 }
