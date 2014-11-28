@@ -41,7 +41,7 @@ object Implicits {
   implicit def toFloat(v: Int): Float = v.toFloat
   implicit def toFloat(v: Long): Float = v.toFloat
 
-  implicit def toInt(v: String): Int = v.toInt
+  implicit def toInt(v: String): Int = v.asInt().getOrElse(0)
   implicit def toOption[T](v: T): Option[T] = Some(v)
 
   implicit def toRunnable(fun: => Unit): Runnable = new Runnable { def run() { fun } }
