@@ -1,62 +1,95 @@
 package de.windelknecht.stup.utils.data
 
 package object length {
-  implicit class toDataLength(in: Int) {
-    def bit = DataLength(in, DataLengthUnit.bit)
-    def bits = bit
+  implicit class fromBitLength(in: BitLength) {
+    def asBits = in.len
+    def asBytes = asBits / 8
+  }
 
-    def byte = DataLength(in, DataLengthUnit.byte)
+  implicit class fromBitLengthToIEC(in: BitLength) {
+    def asKiB = new fromBitLength(in).asBytes / 1024
+    def asMiB = asKiB / 1024
+    def asGiB = asMiB / 1024
+    def asTiB = asGiB / 1024
+    def asPiB = asTiB / 1024
+    def asEiB = asPiB / 1024
+    def asZiB = asEiB / 1024
+    def asYiB = asZiB / 1024
+  }
+
+  implicit class fromBitLengthToSI(in: BitLength) {
+    def asKB = new fromBitLength(in).asBytes / 1000
+    def asMB = asKB / 1000
+    def asGB = asMB / 1000
+    def asTB = asGB / 1000
+    def asPB = asTB / 1000
+    def asEB = asPB / 1000
+    def asZB = asEB / 1000
+    def asYB = asZB / 1000
+  }
+
+  implicit class toBitLength(in: Double) {
+    def bit = BitLength(in)
+    def bits = bit
+    def Bit = bit
+    def Bits = bit
+
+    def byte = BitLength(in * 8)
     def bytes = byte
     def B = byte
     def Byte = byte
     def Bytes = byte
+  }
 
-    def Kilobyte = DataLength(in, DataLengthUnit.Kilobyte)
-    def kB = Kilobyte
-
-    def Kibibyte = DataLength(in, DataLengthUnit.Kibibyte)
+  implicit class toBitLengthFromIEC(in: Double) {
+    def Kibibyte = BitLength(in * 8 * 1024)
     def KiB = Kibibyte
 
-    def Megabyte = DataLength(in, DataLengthUnit.Megabyte)
-    def MB = Megabyte
-
-    def Mebibyte = DataLength(in, DataLengthUnit.Mebibyte)
+    def Mebibyte = BitLength(in * 8 * 1024 * 1024)
     def MiB = Mebibyte
 
-    def Gigabyte = DataLength(in, DataLengthUnit.Gigabyte)
-    def GB = Gigabyte
-
-    def Gibibyte = DataLength(in, DataLengthUnit.Gibibyte)
+    def Gibibyte = BitLength(in * 8 * 1024 * 1024 * 1024)
     def GiB = Gibibyte
 
-    def Terabyte = DataLength(in, DataLengthUnit.Terabyte)
-    def TB = Terabyte
-
-    def Tebibyte = DataLength(in, DataLengthUnit.Tebibyte)
+    def Tebibyte = BitLength(in * 8 * 1024 * 1024 * 1024 * 1024)
     def TiB = Tebibyte
 
-    def Petabyte = DataLength(in, DataLengthUnit.Petabyte)
-    def PB = Petabyte
-
-    def Pebibyte = DataLength(in, DataLengthUnit.Pebibyte)
+    def Pebibyte = BitLength(in * 8 * 1024 * 1024 * 1024 * 1024 * 1024)
     def PiB = Pebibyte
 
-    def Exabyte = DataLength(in, DataLengthUnit.Exabyte)
-    def EB = Exabyte
-
-    def Exbibyte = DataLength(in, DataLengthUnit.Exbibyte)
+    def Exbibyte = BitLength(in * 8 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024)
     def EiB = Exbibyte
 
-    def Zettabyte = DataLength(in, DataLengthUnit.Zettabyte)
-    def ZB = Zettabyte
-
-    def Zebibyte = DataLength(in, DataLengthUnit.Zebibyte)
+    def Zebibyte = BitLength(in * 8 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024)
     def ZiB = Zebibyte
 
-    def Yottabyte = DataLength(in, DataLengthUnit.Yottabyte)
-    def YB = Yottabyte
-
-    def Yobibyte = DataLength(in, DataLengthUnit.Yobibyte)
+    def Yobibyte = BitLength(in * 8 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024)
     def YiB = Yobibyte
+  }
+
+  implicit class toBitLengthFromSI(in: Double) {
+    def Kilobyte = BitLength(in * 8 * 1000)
+    def kB = Kilobyte
+
+    def Megabyte = BitLength(in * 8 * 1000 * 1000)
+    def MB = Megabyte
+
+    def Gigabyte = BitLength(in * 8 * 1000 * 1000 * 1000)
+    def GB = Gigabyte
+
+    def Terabyte = BitLength(in * 8 * 1000 * 1000 * 1000 * 1000)
+    def TB = Terabyte
+
+    def Petabyte = BitLength(in * 8 * 1000 * 1000 * 1000 * 1000 * 1000)
+    def PB = Petabyte
+
+    def Exabyte = BitLength(in * 8 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000)
+    def EB = Exabyte
+
+    def Zettabyte = BitLength(in * 8 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000)
+    def ZB = Zettabyte
+
+    def Yottabyte = BitLength(in * 8 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000)
+    def YB = Yottabyte
   }
 }

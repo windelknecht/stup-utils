@@ -34,6 +34,7 @@ object Implicits {
   implicit def toBool(v: Int): Boolean = if(v == 0) false else true
   implicit def toBool(v: Short): Boolean = toBool(v.toInt)
 
+  implicit def toDouble(v: Int): Double = v.toLong
   implicit def toLong(v: Int): Long = v.toLong
   implicit def toShort(v: Int): Short = v.toShort
   implicit def toString(v: Int): String = v.toString
