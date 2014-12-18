@@ -7,6 +7,9 @@ package object length {
 
     def byte = DataLength(in, DataLengthUnit.byte)
     def bytes = byte
+    def B = byte
+    def Byte = byte
+    def Bytes = byte
 
     def Kilobyte = DataLength(in, DataLengthUnit.Kilobyte)
     def kB = Kilobyte
@@ -44,8 +47,8 @@ package object length {
     def Exbibyte = DataLength(in, DataLengthUnit.Exbibyte)
     def EiB = Exbibyte
 
-    def Zetabyte = DataLength(in, DataLengthUnit.Zetabyte)
-    def ZB = Zetabyte
+    def Zettabyte = DataLength(in, DataLengthUnit.Zettabyte)
+    def ZB = Zettabyte
 
     def Zebibyte = DataLength(in, DataLengthUnit.Zebibyte)
     def ZiB = Zebibyte
