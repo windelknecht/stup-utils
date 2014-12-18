@@ -1,5 +1,7 @@
 package de.windelknecht.stup.utils.data
 
+import de.windelknecht.stup.utils.data.length.ByteUnit.ByteUnit
+
 package object length {
   implicit class fromBitLength(in: BitLength) {
     def asBits = in.len
@@ -34,62 +36,122 @@ package object length {
     def Bit = bit
     def Bits = bit
 
-    def byte = BitLength(in * 8)
+    def asByte = BitLength(in * 8)
+  }
+
+  implicit class toBitLengthFromIEC(in: Double) {
+    def asKibibyte = BitLength(in * 8 * 1024)
+    def asKiB = asKibibyte
+
+    def asMebibyte = BitLength(in * 8 * 1024 * 1024)
+    def asMiB = asMebibyte
+
+    def asGibibyte = BitLength(in * 8 * 1024 * 1024 * 1024)
+    def asGiB = asGibibyte
+
+    def asTebibyte = BitLength(in * 8 * 1024 * 1024 * 1024 * 1024)
+    def asTiB = asTebibyte
+
+    def asPebibyte = BitLength(in * 8 * 1024 * 1024 * 1024 * 1024 * 1024)
+    def asPiB = asPebibyte
+
+    def asExbibyte = BitLength(in * 8 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024)
+    def asEiB = asExbibyte
+
+    def asZebibyte = BitLength(in * 8 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024)
+    def asZiB = asZebibyte
+
+    def asYobibyte = BitLength(in * 8 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024)
+    def asYiB = asYobibyte
+  }
+
+  implicit class toBitLengthFromSI(in: Double) {
+    def asKilobyte = BitLength(in * 8 * 1000)
+    def asKB = asKilobyte
+
+    def asMegabyte = BitLength(in * 8 * 1000 * 1000)
+    def asMB = asMegabyte
+
+    def asGigabyte = BitLength(in * 8 * 1000 * 1000 * 1000)
+    def asGB = asGigabyte
+
+    def asTerabyte = BitLength(in * 8 * 1000 * 1000 * 1000 * 1000)
+    def asTB = asTerabyte
+
+    def asPetabyte = BitLength(in * 8 * 1000 * 1000 * 1000 * 1000 * 1000)
+    def asPB = asPetabyte
+
+    def asExabyte = BitLength(in * 8 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000)
+    def asEB = asExabyte
+
+    def asZettabyte = BitLength(in * 8 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000)
+    def asZB = asZettabyte
+
+    def asYottabyte = BitLength(in * 8 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000)
+    def asYB = asYottabyte
+  }
+
+  implicit class toByteLength(in: Double) {
+    def byte = ByteLength(toBitLength(in).asByte, ByteUnit.B)
     def bytes = byte
     def B = byte
     def Byte = byte
     def Bytes = byte
   }
 
-  implicit class toBitLengthFromIEC(in: Double) {
-    def Kibibyte = BitLength(in * 8 * 1024)
+  implicit class toByteLengthFromIEC(in: Double) {
+    def Kibibyte = create(toBitLengthFromIEC(in).asKiB, ByteUnit.KiB)
     def KiB = Kibibyte
 
-    def Mebibyte = BitLength(in * 8 * 1024 * 1024)
+    def Mebibyte = create(toBitLengthFromIEC(in).asMiB, ByteUnit.MiB)
     def MiB = Mebibyte
 
-    def Gibibyte = BitLength(in * 8 * 1024 * 1024 * 1024)
+    def Gibibyte = create(toBitLengthFromIEC(in).asGiB, ByteUnit.GiB)
     def GiB = Gibibyte
 
-    def Tebibyte = BitLength(in * 8 * 1024 * 1024 * 1024 * 1024)
+    def Tebibyte = create(toBitLengthFromIEC(in).asTiB, ByteUnit.TiB)
     def TiB = Tebibyte
 
-    def Pebibyte = BitLength(in * 8 * 1024 * 1024 * 1024 * 1024 * 1024)
+    def Pebibyte = create(toBitLengthFromIEC(in).asPiB, ByteUnit.PiB)
     def PiB = Pebibyte
 
-    def Exbibyte = BitLength(in * 8 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024)
+    def Exbibyte = create(toBitLengthFromIEC(in).asEiB, ByteUnit.EiB)
     def EiB = Exbibyte
 
-    def Zebibyte = BitLength(in * 8 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024)
+    def Zebibyte = create(toBitLengthFromIEC(in).asZiB, ByteUnit.ZiB)
     def ZiB = Zebibyte
 
-    def Yobibyte = BitLength(in * 8 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024)
+    def Yobibyte = create(toBitLengthFromIEC(in).asYiB, ByteUnit.YiB)
     def YiB = Yobibyte
+
+    private def create(bits: BitLength, unit: ByteUnit) = ByteLength(bits, unit)
   }
 
-  implicit class toBitLengthFromSI(in: Double) {
-    def Kilobyte = BitLength(in * 8 * 1000)
-    def kB = Kilobyte
+  implicit class toByteLengthFromSI(in: Double) {
+    def Kilobyte = create(toBitLengthFromSI(in).asKB, ByteUnit.KB)
+    def KB = Kilobyte
 
-    def Megabyte = BitLength(in * 8 * 1000 * 1000)
+    def Megabyte = create(toBitLengthFromSI(in).asMB, ByteUnit.MB)
     def MB = Megabyte
 
-    def Gigabyte = BitLength(in * 8 * 1000 * 1000 * 1000)
+    def Gigabyte = create(toBitLengthFromSI(in).asGB, ByteUnit.GB)
     def GB = Gigabyte
 
-    def Terabyte = BitLength(in * 8 * 1000 * 1000 * 1000 * 1000)
+    def Terabyte = create(toBitLengthFromSI(in).asTB, ByteUnit.TB)
     def TB = Terabyte
 
-    def Petabyte = BitLength(in * 8 * 1000 * 1000 * 1000 * 1000 * 1000)
+    def Petabyte = create(toBitLengthFromSI(in).asPB, ByteUnit.PB)
     def PB = Petabyte
 
-    def Exabyte = BitLength(in * 8 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000)
+    def Exabyte = create(toBitLengthFromSI(in).asEB, ByteUnit.EB)
     def EB = Exabyte
 
-    def Zettabyte = BitLength(in * 8 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000)
+    def Zettabyte = create(toBitLengthFromSI(in).asZB, ByteUnit.ZB)
     def ZB = Zettabyte
 
-    def Yottabyte = BitLength(in * 8 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000)
+    def Yottabyte = create(toBitLengthFromSI(in).asYB, ByteUnit.YB)
     def YB = Yottabyte
+
+    private def create(bits: BitLength, unit: ByteUnit) = ByteLength(bits, unit)
   }
 }

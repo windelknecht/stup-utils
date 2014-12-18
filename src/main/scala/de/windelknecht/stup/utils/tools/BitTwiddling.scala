@@ -24,6 +24,7 @@
 
 package de.windelknecht.stup.utils.tools
 
+import scala.collection
 import scala.collection.BitSet
 
 object BitTwiddling {
@@ -35,7 +36,11 @@ object BitTwiddling {
   def getMostSignificantBit[T <: Enumeration](
     enum: T
     ): Option[Int] = getMostSignificantBit(enum.values.toBitMask)
-  
+
+  /**
+   * Get the most significant bit from a bit set
+   */
+
   /**
    * Get the most significant bit from a bit set
    */

@@ -13,11 +13,7 @@ class toBitLengthSpec
   }
 
   "want a byte" when {
-    "using function byte"  should { test("byte",  toBitLength(8).byte, 64) }
-    "using function bytes" should { test("bytes", toBitLength(8).bytes, 64) }
-    "using function B"     should { test("B",     toBitLength(1).B, 8) }
-    "using function Byte"  should { test("Byte",  toBitLength(2).Byte, 16) }
-    "using function Bytes" should { test("Bytes", toBitLength(8).Byte, 64) }
+    "using function byte"  should { test("byte",  toBitLength(8).asByte, 64) }
   }
 
   def test(
