@@ -1,35 +1,6 @@
 package de.windelknecht.stup.utils.data
 
-import de.windelknecht.stup.utils.data.length.ByteUnit.ByteUnit
-
 package object length {
-  implicit class fromBitLength(in: BitLength) {
-    def asBits = in.len
-    def asBytes = asBits / 8
-  }
-
-  implicit class fromBitLengthToIEC(in: BitLength) {
-    def asKiB = new fromBitLength(in).asBytes / 1024
-    def asMiB = asKiB / 1024
-    def asGiB = asMiB / 1024
-    def asTiB = asGiB / 1024
-    def asPiB = asTiB / 1024
-    def asEiB = asPiB / 1024
-    def asZiB = asEiB / 1024
-    def asYiB = asZiB / 1024
-  }
-
-  implicit class fromBitLengthToSI(in: BitLength) {
-    def asKB = new fromBitLength(in).asBytes / 1000
-    def asMB = asKB / 1000
-    def asGB = asMB / 1000
-    def asTB = asGB / 1000
-    def asPB = asTB / 1000
-    def asEB = asPB / 1000
-    def asZB = asEB / 1000
-    def asYB = asZB / 1000
-  }
-
   implicit class toBitLength(in: Double) {
     def bit = BitLength(in)
     def bits = bit
@@ -92,7 +63,7 @@ package object length {
   }
 
   implicit class toByteLength(in: Double) {
-    def byte = ByteLength(toBitLength(in).asByte, ByteUnit.B)
+    def byte = ByteLength(toBitLength(in).asByte)
     def bytes = byte
     def B = byte
     def Byte = byte
@@ -100,58 +71,58 @@ package object length {
   }
 
   implicit class toByteLengthFromIEC(in: Double) {
-    def Kibibyte = create(toBitLengthFromIEC(in).asKiB, ByteUnit.KiB)
+    def Kibibyte = create(toBitLengthFromIEC(in).asKiB)
     def KiB = Kibibyte
 
-    def Mebibyte = create(toBitLengthFromIEC(in).asMiB, ByteUnit.MiB)
+    def Mebibyte = create(toBitLengthFromIEC(in).asMiB)
     def MiB = Mebibyte
 
-    def Gibibyte = create(toBitLengthFromIEC(in).asGiB, ByteUnit.GiB)
+    def Gibibyte = create(toBitLengthFromIEC(in).asGiB)
     def GiB = Gibibyte
 
-    def Tebibyte = create(toBitLengthFromIEC(in).asTiB, ByteUnit.TiB)
+    def Tebibyte = create(toBitLengthFromIEC(in).asTiB)
     def TiB = Tebibyte
 
-    def Pebibyte = create(toBitLengthFromIEC(in).asPiB, ByteUnit.PiB)
+    def Pebibyte = create(toBitLengthFromIEC(in).asPiB)
     def PiB = Pebibyte
 
-    def Exbibyte = create(toBitLengthFromIEC(in).asEiB, ByteUnit.EiB)
+    def Exbibyte = create(toBitLengthFromIEC(in).asEiB)
     def EiB = Exbibyte
 
-    def Zebibyte = create(toBitLengthFromIEC(in).asZiB, ByteUnit.ZiB)
+    def Zebibyte = create(toBitLengthFromIEC(in).asZiB)
     def ZiB = Zebibyte
 
-    def Yobibyte = create(toBitLengthFromIEC(in).asYiB, ByteUnit.YiB)
+    def Yobibyte = create(toBitLengthFromIEC(in).asYiB)
     def YiB = Yobibyte
 
-    private def create(bits: BitLength, unit: ByteUnit) = ByteLength(bits, unit)
+    private def create(bits: BitLength) = ByteLength(bits)
   }
 
   implicit class toByteLengthFromSI(in: Double) {
-    def Kilobyte = create(toBitLengthFromSI(in).asKB, ByteUnit.KB)
+    def Kilobyte = create(toBitLengthFromSI(in).asKB)
     def KB = Kilobyte
 
-    def Megabyte = create(toBitLengthFromSI(in).asMB, ByteUnit.MB)
+    def Megabyte = create(toBitLengthFromSI(in).asMB)
     def MB = Megabyte
 
-    def Gigabyte = create(toBitLengthFromSI(in).asGB, ByteUnit.GB)
+    def Gigabyte = create(toBitLengthFromSI(in).asGB)
     def GB = Gigabyte
 
-    def Terabyte = create(toBitLengthFromSI(in).asTB, ByteUnit.TB)
+    def Terabyte = create(toBitLengthFromSI(in).asTB)
     def TB = Terabyte
 
-    def Petabyte = create(toBitLengthFromSI(in).asPB, ByteUnit.PB)
+    def Petabyte = create(toBitLengthFromSI(in).asPB)
     def PB = Petabyte
 
-    def Exabyte = create(toBitLengthFromSI(in).asEB, ByteUnit.EB)
+    def Exabyte = create(toBitLengthFromSI(in).asEB)
     def EB = Exabyte
 
-    def Zettabyte = create(toBitLengthFromSI(in).asZB, ByteUnit.ZB)
+    def Zettabyte = create(toBitLengthFromSI(in).asZB)
     def ZB = Zettabyte
 
-    def Yottabyte = create(toBitLengthFromSI(in).asYB, ByteUnit.YB)
+    def Yottabyte = create(toBitLengthFromSI(in).asYB)
     def YB = Yottabyte
 
-    private def create(bits: BitLength, unit: ByteUnit) = ByteLength(bits, unit)
+    private def create(bits: BitLength) = ByteLength(bits)
   }
 }

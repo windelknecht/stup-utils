@@ -4,16 +4,16 @@ object ByteUnit
   extends Enumeration {
   type ByteUnit = Value
 
-  val B = Value
+  val B = Value(0)
 
-  val KiB = Value
-  val MiB = Value
-  val GiB = Value
-  val TiB = Value
-  val PiB = Value
-  val EiB = Value
-  val ZiB = Value
-  val YiB = Value
+  val KiB = Value(10)
+  val MiB = Value(20)
+  val GiB = Value(30)
+  val TiB = Value(40)
+  val PiB = Value(50)
+  val EiB = Value(60)
+  val ZiB = Value(70)
+  val YiB = Value(80)
 
   val KB = Value
   val MB = Value
@@ -23,4 +23,8 @@ object ByteUnit
   val EB = Value
   val ZB = Value
   val YB = Value
+
+//  def from(id: Int) = {
+//    apply(id)
+//  }
 }

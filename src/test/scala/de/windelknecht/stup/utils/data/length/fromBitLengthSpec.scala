@@ -7,17 +7,17 @@ class fromBitLengthSpec
   with Matchers {
   "want as bit" should {
     "return correct len" in {
-      new fromBitLength(BitLength(13)).asBits should be (13)
+      new BitLength(13).toBits should be (13)
     }
   }
 
   "want as byte" should {
     "return correct len (aligned)" in {
-      new fromBitLength(BitLength(16)).asBytes should be (2d)
+      new BitLength(16).toBytes should be (2d)
     }
 
     "return correct len (unaligned)" in {
-      new fromBitLength(BitLength(13)).asBytes should be (13d/8)
+      new BitLength(13).toBytes should be (13d/8)
     }
   }
 }

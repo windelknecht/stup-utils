@@ -67,7 +67,7 @@ object Implicits {
   /**
    * Format byte value into a human readable string.
    */
-  implicit class ByteFormatter(bytes: Long) {
+  implicit class ByteFormatter(bytes: Double) {
     def asHumanReadableByte = format(value = bytes)
     def asHumanReadableSiByte = format(value = bytes, isSI = true)
 
@@ -90,7 +90,7 @@ object Implicits {
      * 9223372036854775807:     9.2 EB    8.0 EiB   (Long.MAX_VALUE)
      */
     private def format(
-      value: Long,
+      value: Double,
       isSI: Boolean = false
       ): String = {
       val unit = if(isSI) 1000 else 1024
@@ -98,7 +98,7 @@ object Implicits {
       if (value < unit) return s"$value B"
 
       val exp = (math.log(value) / math.log(unit)).toInt
-      val pre = (if(isSI) "kMGTPE" else "KMGTPE").charAt(exp-1) + (if(isSI) "" else "i")
+      val pre = (if(isSI) "kMGTPEZY" else "KMGTPEZY").charAt(exp-1) + (if(isSI) "" else "i")
 
       "%.2f %sB".format(value / math.pow(unit, exp), pre)
     }
