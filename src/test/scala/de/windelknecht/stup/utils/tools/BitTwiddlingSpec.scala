@@ -80,6 +80,10 @@ class BitTwiddlingSpec
         BitTwiddling.getMostSignificantBit(Array((1 << 0).toLong)) should be (Some(0))
       }
 
+      "identify bit 63" in {
+        BitTwiddling.getMostSignificantBit(Array((1<<63).toLong, 0l)) should be (Some(63))
+      }
+
       "identify bit 127" in {
         BitTwiddling.getMostSignificantBit(Array(0l, (1<<63).toLong)) should be (Some(127))
       }

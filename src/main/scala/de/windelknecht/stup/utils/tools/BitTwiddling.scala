@@ -24,7 +24,6 @@
 
 package de.windelknecht.stup.utils.tools
 
-import scala.collection
 import scala.collection.BitSet
 
 object BitTwiddling {
@@ -54,9 +53,15 @@ object BitTwiddling {
   def getMostSignificantBit(
     bitSet: Array[Long]
     ): Option[Int] = {
-    val offset = bitSet.tail.size * 64
+    val ar = bitSet // drop most sign longs with 0
+      .reverse
+      .dropWhile(_ == 0)
+      .reverse
 
-    getMostSignificantBit(bitSet.reverse.head) match {
+    if(ar.size == 0) return None
+
+    val offset = ar.tail.size * 64
+    getMostSignificantBit(ar.reverse.head) match {
       case Some(x) => x + offset
       case None => None
     }
