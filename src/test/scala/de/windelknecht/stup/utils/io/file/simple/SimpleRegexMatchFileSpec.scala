@@ -4,15 +4,6 @@ import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 
-/**
- * Created by Me.
- * User: Heiko Blobner
- * Mail: heiko.blobner@gmx.de
- *
- * Date: 10.06.14
- * Time: 12:05
- *
- */
 class SimpleRegexMatchFileSpec
   extends WordSpec
   with Matchers
