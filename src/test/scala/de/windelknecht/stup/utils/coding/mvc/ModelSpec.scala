@@ -7,22 +7,22 @@ import org.mockito.Mockito._
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatest.mock.MockitoSugar
 
-case class entityMock_complex(
+case class ms_entityMock_complex(
   id: UUID = UUID.randomUUID(),
   name: String = "",
   description: String = ""
   ) extends Entity
 
-case class entityMock_simple(
+case class ms_entityMock_simple(
   id: UUID = UUID.randomUUID()
   ) extends Entity
 
-class modelMock_complex(
+class ms_modelMock_complex(
   dao: Dao,
   entityId: UUID,
   modelHandler: ActorRef
   )
-  extends Model[entityMock_complex](
+  extends Model[ms_entityMock_complex](
     dao = dao,
     entityId = entityId,
     modelHandler = modelHandler
@@ -31,12 +31,12 @@ class modelMock_complex(
   def getModelHandler = modelHandler
 }
 
-class modelMock_simple(
+class ms_modelMock_simple(
   dao: Dao,
   entityId: UUID,
   modelHandler: ActorRef
   )
-  extends Model[entityMock_simple](
+  extends Model[ms_entityMock_simple](
     dao = dao,
     entityId = entityId,
     modelHandler = modelHandler
@@ -44,7 +44,6 @@ class modelMock_simple(
   def getDao = dao
   def getModelHandler = modelHandler
 }
-
 
 class ModelSpec
   extends WordSpec
@@ -56,9 +55,9 @@ class ModelSpec
         val m = mock[Dao]
         val id = UUID.randomUUID()
 
-        when(m.read(id)).thenReturn(Some(entityMock_complex(id)))
+        when(m.read(id)).thenReturn(Some(ms_entityMock_complex(id)))
 
-        new modelMock_complex(m, id, null)
+        new ms_modelMock_complex(m, id, null)
 
         Thread.sleep(50)
         verify(m).read(id)
@@ -68,9 +67,9 @@ class ModelSpec
         val m = mock[Dao]
         val id = UUID.randomUUID()
 
-        when(m.read(id)).thenReturn(Some(entityMock_simple(id)))
+        when(m.read(id)).thenReturn(Some(ms_entityMock_simple(id)))
 
-        an[IllegalStateException] should be thrownBy{ new modelMock_complex(m, id, null).id }
+        an[IllegalStateException] should be thrownBy{ new ms_modelMock_complex(m, id, null).id }
       }
     }
 
@@ -80,9 +79,9 @@ class ModelSpec
         val id = UUID.randomUUID()
 
         when(m.read(id)).thenReturn(None)
-        when(m.create(classOf[entityMock_complex].getName)).thenReturn(entityMock_complex(id))
+        when(m.create(classOf[ms_entityMock_complex].getName)).thenReturn(ms_entityMock_complex(id))
 
-        new modelMock_complex(m, id, null).id
+        new ms_modelMock_complex(m, id, null).id
 
         verify(m).read(id)
       }
@@ -92,11 +91,11 @@ class ModelSpec
         val id = UUID.randomUUID()
 
         when(m.read(id)).thenReturn(None)
-        when(m.create(classOf[entityMock_complex].getName)).thenReturn(entityMock_complex(id))
+        when(m.create(classOf[ms_entityMock_complex].getName)).thenReturn(ms_entityMock_complex(id))
 
-        new modelMock_complex(m, id, null).id
+        new ms_modelMock_complex(m, id, null).id
 
-        verify(m).create(classOf[entityMock_complex].getName)
+        verify(m).create(classOf[ms_entityMock_complex].getName)
       }
     }
   }
@@ -139,7 +138,7 @@ class ModelSpec
           sm.name = "jskjsk"
 
           Thread.sleep(100)
-          verify(dao).update(entityMock_complex(e.id, "jskjsk", e.description))
+          verify(dao).update(ms_entityMock_complex(e.id, "jskjsk", e.description))
         }
       }
 
@@ -153,12 +152,12 @@ class ModelSpec
     }
   }
 
-  private def createMock(): (Dao, modelMock_complex, entityMock_complex) = {
+  private def createMock(): (Dao, ms_modelMock_complex, ms_entityMock_complex) = {
     val m = mock[Dao]
-    val e = entityMock_complex(name = RandomHelper.rndString(), description = RandomHelper.rndString())
+    val e = ms_entityMock_complex(name = RandomHelper.rndString(), description = RandomHelper.rndString())
 
     when(m.read(e.id)).thenReturn(Some(e))
 
-    (m, new modelMock_complex(m, e.id, null), e)
+    (m, new ms_modelMock_complex(m, e.id, null), e)
   }
 }
