@@ -53,18 +53,22 @@ object ModelHandler {
   case class Delete  (id: UUID)          extends smhReq
 
   trait smhRes extends smhMsg
-  trait smhCreateRes extends smhRes
-  trait smhReadRes   extends smhRes
+  trait smhCreateRes   extends smhRes
+  trait smhDeleteRes   extends smhRes
+  trait smhReadRes     extends smhRes
+  trait smhReadMoreRes extends smhRes
 
-  case class CreateSuccess(model: SM)           extends smhCreateRes
-  case class CreateFailure(err: String)         extends smhCreateRes
+  case class CreateSuccess(model: SM)             extends smhCreateRes
+  case class CreateFailure(err: String)           extends smhCreateRes
 
-  case class DeleteSuccess(id: UUID)            extends smhRes
+  case class DeleteSuccess(id: UUID)              extends smhDeleteRes
+  case class DeleteFailure(id: UUID, err: String) extends smhDeleteRes
 
-  case class ReadSuccess(model: SM)             extends smhReadRes
-  case class ReadFailure(id: UUID, err: String) extends smhReadRes
+  case class ReadSuccess(model: SM)               extends smhReadRes
+  case class ReadFailure(id: UUID, err: String)   extends smhReadRes
 
-  case class ReadMoreSuccess(result: SelectRes) extends smhReadRes
+  case class ReadMoreSuccess(select: SelectRes)   extends smhReadMoreRes
+  case class ReadMoreFailure(err: String)         extends smhReadMoreRes
 
   /**
    * Create a actor reference.

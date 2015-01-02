@@ -370,7 +370,7 @@ class ModelHandlerSpec
         actor ! ModelHandler.ReadMore(Select.mapByType[mhs_entityMock_simple1])
 
         val cs = receiveN(1, 5 seconds)(0).asInstanceOf[ReadMoreSuccess]
-        cs.result.isInstanceOf[ModelListRes] should be(right = true)
+        cs.select.isInstanceOf[ModelListRes] should be(right = true)
       }
     }
 

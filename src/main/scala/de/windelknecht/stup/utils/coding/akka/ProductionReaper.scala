@@ -7,5 +7,5 @@ package de.windelknecht.stup.utils.coding.akka
  */
 class ProductionReaper extends Reaper {
   // Shutdown
-  def allSoulsReaped(): Unit = context.system.shutdown()
+  def allSoulsReaped(): Unit = context.system.synchronized { context.system.shutdown() }
 }

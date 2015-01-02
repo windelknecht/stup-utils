@@ -31,15 +31,6 @@ import de.windelknecht.stup.utils.coding.akka.Reaper.WatchMe
 
 import scala.reflect.ClassTag
 
-/**
- * Created by Me.
- * User: Heiko Blobner
- * Mail: heiko.blobner@gmx.de
- *
- * Date: 08.07.14
- * Time: 15:58
- *
- */
 object ActorHeHyphenMan {
   // fields
   private val _asToReaper = new collection.mutable.HashMap[ActorSystem, ActorRef]()
