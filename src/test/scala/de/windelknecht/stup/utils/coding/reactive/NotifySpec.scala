@@ -182,13 +182,15 @@ class NotifySpec
     "registered on a single event" should {
       "get notified" in {
         val tto = new B
-        var res = "no"
 
         tto.registerNotify(UUID.randomUUID(), {
-          case (E1, "E1") ++ _ => res = "E1"
+          case (E1, "E1") ++ _ => testActor ! "E1"
         })
         tto.fire("E1")
-        res should be ("E1")
+
+        within(1 second) {
+          expectMsg("E1")
+        }
       }
 
       "be able to unregister itself" in {
@@ -242,16 +244,17 @@ class NotifySpec
     "registered on multiple event" should {
       "get notified" in {
         val tto = new B
-        var res = "no"
 
         tto.registerNotify(UUID.randomUUID(), {
-          case (E1, "E1") ++ _ => res = "E1"
-          case (E2, "E2") ++ _ => res = "E2"
+          case (E1, "E1") ++ _ => testActor ! "E1"
+          case (E2, "E2") ++ _ => testActor ! "E2"
         })
         tto.fire("E1")
-        res should be ("E1")
         tto.fire("E2")
-        res should be ("E2")
+        within(1 second) {
+          expectMsg("E1")
+          expectMsg("E2")
+        }
       }
 
       "be able to unregister all msg" in {
@@ -275,63 +278,65 @@ class NotifySpec
       "dispatch fired events (not events masked)" in {
         val tto = new B
         val foreign = new B
-        var res = "no"
 
         tto.forwardEvents(foreign)
 
         foreign.registerNotify(UUID.randomUUID(), {
-          case (E1, "E1") ++ _ => res = "E1"
+          case (E1, "E1") ++ _ => testActor ! "E1"
         })
         tto.fire("E1")
-        res should be ("E1")
+        within(1 second) {
+          expectMsg("E1")
+        }
       }
 
       "dispatch fired events (1st event in list - not masked)" in {
         val tto = new B
         val foreign = new B
-        var res = "no"
 
         tto.forwardEvents(foreign, E1, E3)
 
         foreign.registerNotify(UUID.randomUUID(), {
-          case (E1, "E1") ++ _ => res = "E1"
-          case (E2, "E2") ++ _ => res = "E2"
-          case (E3, "E3") ++ _ => res = "E3"
+          case (E1, "E1") ++ _ => testActor ! "E1"
+          case (E2, "E2") ++ _ => testActor ! "E2"
+          case (E3, "E3") ++ _ => testActor ! "E3"
         })
         tto.fire("E1")
-        res should be ("E1")
+        within(1 second) {
+          expectMsg("E1")
+        }
       }
 
       "dispatch fired events (outmasked event)" in {
         val tto = new B
         val foreign = new B
-        var res = "no"
 
         tto.forwardEvents(foreign, E1, E3)
 
         foreign.registerNotify(UUID.randomUUID(), {
-          case (E1, "E1") ++ _ => res = "E1"
-          case (E2, "E2") ++ _ => res = "E2"
-          case (E3, "E3") ++ _ => res = "E3"
+          case (E1, "E1") ++ _ => testActor ! "E1"
+          case (E2, "E2") ++ _ => testActor ! "E2"
+          case (E3, "E3") ++ _ => testActor ! "E3"
         })
         tto.fire("E2")
-        res should be ("no")
+        expectNoMsg(1 second)
       }
 
       "dispatch fired events (last event in list - not masked)" in {
         val tto = new B
         val foreign = new B
-        var res = "no"
 
         tto.forwardEvents(foreign, E1, E3)
 
         foreign.registerNotify(UUID.randomUUID(), {
-          case (E1, "E1") ++ _ => res = "E1"
-          case (E2, "E2") ++ _ => res = "E2"
-          case (E3, "E3") ++ _ => res = "E3"
+          case (E1, "E1") ++ _ => testActor ! "E1"
+          case (E2, "E2") ++ _ => testActor ! "E2"
+          case (E3, "E3") ++ _ => testActor ! "E3"
         })
         tto.fire("E3")
-        res should be ("E3")
+        within(1 second) {
+          expectMsg("E3")
+        }
       }
     }
 
@@ -415,26 +420,28 @@ class NotifySpec
     "penetrated one notifier" should {
       "fire a (OnListenerChange, HasListenerAdded)" in {
         val tto = new B
-        var res = "no"
 
         tto.registerNotify(UUID.randomUUID(), {
-          case (OnListenerChanged, HasListenerAdded) ++ _ => res = "add"
+          case (OnListenerChanged, HasListenerAdded) ++ _ => testActor ! "add"
         })
-        res should be ("add")
+        within(1 second) {
+          expectMsg("add")
+        }
       }
 
       "fire a (OnListenerChange, HasListenerRemoved)" in {
         val tto = new B
         val id = UUID.randomUUID()
-        var res = "no"
 
         tto.registerNotify(UUID.randomUUID(), {
-          case (OnListenerChanged, HasListenerRemoved) ++ _ => res = "rem"
+          case (OnListenerChanged, HasListenerRemoved) ++ _ => testActor ! "rem"
         })
         tto.registerNotify(id, { case _ => })
         tto.unregisterNotify(id)
 
-        res should be ("rem")
+        within(1 second) {
+          expectMsg("rem")
+        }
       }
     }
   }
