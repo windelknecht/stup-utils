@@ -12,10 +12,11 @@ import scala.concurrent.duration._
 
 class DaoMock
   extends Dao {
+  override def close() = {}
+  override def delete(id: UUID) {}
   override def read(id: UUID) = None
   override def read() = null
   override def update[T <: Entity](entity: T) = null
-  override def delete(id: UUID) {}
 }
 
 case class mhs_entityMock_simple1(

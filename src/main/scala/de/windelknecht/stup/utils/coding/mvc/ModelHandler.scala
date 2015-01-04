@@ -127,6 +127,7 @@ class ModelHandler(
    */
   protected def shutdown() = {
     _gc.shutdown()
+    dao.close()
 
     context stop self
   }

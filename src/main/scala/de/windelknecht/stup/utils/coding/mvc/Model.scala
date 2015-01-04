@@ -35,7 +35,6 @@ object Model {
   case class Changed(propertyName: String, oldValue: Any, newValue: Any)
   case class Deleted(err: Option[String])
 
-
   /**
    * Private usage.
    */
