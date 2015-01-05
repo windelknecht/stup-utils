@@ -41,6 +41,11 @@ package object vfs {
     def isDirectory = file.getType == FileType.FOLDER
 
     /**
+     * Return true if file is empty.
+     */
+    def isEmpty = sizeAsNumber == 0
+
+    /**
      * This method scans the given path/file and return all direct child files/directories as a stream.
      */
     def maxDepthFileTree(maxDepth: Int) = getMaxDepthFileTree(maxDepth, file)

@@ -9,6 +9,8 @@ import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{WordSpecLike, BeforeAndAfterAll, Matchers}
 import scala.concurrent.duration._
+import scala.reflect.ClassTag
+import scala.reflect.runtime.{universe => ru}
 
 class DaoMock
   extends Dao {
@@ -16,7 +18,7 @@ class DaoMock
   override def delete(id: UUID) {}
   override def read(id: UUID) = None
   override def read() = null
-  override def update[T <: Entity](entity: T) = null
+  override def update[T <: Entity](entity: T)(implicit classTag: ClassTag[T], typeTag: ru.TypeTag[T]) = null
 }
 
 case class mhs_entityMock_simple1(

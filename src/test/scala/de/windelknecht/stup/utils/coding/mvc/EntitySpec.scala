@@ -2,6 +2,7 @@ package de.windelknecht.stup.utils.coding.mvc
 
 import java.util.UUID
 
+import de.windelknecht.stup.utils.tools.RandomHelper
 import org.scalatest.{Matchers, WordSpec}
 
 class mock_simpleClass(
@@ -339,6 +340,48 @@ class EntitySpec
 
       "throw an exception if the class does not exist" in {
         an[ClassNotFoundException] should be thrownBy { Entity.create("de.windelknecht.stup.utils.coding.mvc.doesNotExist") }
+      }
+    }
+  }
+
+  "using method 'create(String, ...) with provided arguments (Entity with 1 field)" when {
+    "given args are correct" should {
+      "the 1 and only argument should be injected" in {
+        val id = UUID.randomUUID()
+
+        Entity.create(classOf[mock_simpleCaseClass_1Arg], id).id should be (id)
+      }
+    }
+
+    "given args are invalid" should {
+      "an IllegalArgumentException should be thrown" in {
+        an[IllegalArgumentException] should be thrownBy { Entity.create(classOf[mock_simpleCaseClass_1Arg], 13) }
+
+      }
+    }
+  }
+
+  "using method 'create(String, ...) with provided arguments (Entity with 2 fields)" when {
+    "given args are correct" should {
+      "1st argument should be injected" in {
+        val id = UUID.randomUUID()
+        Entity.create(classOf[mock_simpleCaseClass_2Arg], id, RandomHelper.rndInt()).id should be (id)
+      }
+
+      "2nd argument should be injected" in {
+        val int = RandomHelper.rndInt()
+        Entity.create(classOf[mock_simpleCaseClass_2Arg], UUID.randomUUID(), int).asInstanceOf[mock_simpleCaseClass_2Arg].v1 should be (int)
+      }
+    }
+
+    "only 1 arg is provided" should {
+      "1st argument should be injected" in {
+        val id = UUID.randomUUID()
+        Entity.create(classOf[mock_simpleCaseClass_2Arg], id).id should be (id)
+      }
+
+      "2nd argument has default value" in {
+        Entity.create(classOf[mock_simpleCaseClass_2Arg], UUID.randomUUID()).asInstanceOf[mock_simpleCaseClass_2Arg].v1 should be (0)
       }
     }
   }

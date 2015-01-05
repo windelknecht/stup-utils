@@ -2,11 +2,26 @@ package de.windelknecht.stup.utils.coding.mvc
 
 import java.util.UUID
 
+import scala.reflect.ClassTag
+import scala.reflect.runtime.{universe => ru}
+
 trait Dao {
   /**
    * Close data source.
    */
   def close()
+
+  /**
+   * Create an entity - via cached reflection.
+   * The new entity is NOT added to the data set.
+   */
+  def create[E <: Entity]()(implicit classTag: ClassTag[E]): E = create(classTag.runtimeClass).asInstanceOf[E]
+
+  /**
+   * Create an entity - via cached reflection.
+   * The new entity is NOT added to the data set.
+   */
+  def create(clazz: Class[_]): Entity = create(clazz.getName)
 
   /**
    * Create an entity - via cached reflection.
@@ -41,5 +56,5 @@ trait Dao {
    *
    * @param entity entity to update
    */
-  def update[T <: Entity](entity: T): Entity
+  def update[T <: Entity](entity: T)(implicit classTag: ClassTag[T], typeTag: ru.TypeTag[T]): Entity
 }

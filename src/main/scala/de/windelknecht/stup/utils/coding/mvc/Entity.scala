@@ -2,9 +2,11 @@ package de.windelknecht.stup.utils.coding.mvc
 
 import java.util.UUID
 
+import de.windelknecht.stup.utils.coding.reflect.CaseClassReflector
+
 import scala.collection.mutable
 import scala.reflect.ClassTag
-import scala.reflect.runtime.{currentMirror => cm, universe => ru}
+import scala.reflect.runtime.{universe => ru}
 
 /**
  * Base trait of all entities. They all must implement an id method to return their unique
@@ -22,25 +24,27 @@ object Entity {
   /**
    * Create an entity - via cached reflection.
    */
-  def create(className: String): Entity = create(Class.forName(className))
+  def create(className: String, providedArgs: Any*): Entity = create(Class.forName(className), providedArgs:_*)
 
   /**
    * Create an entity - via cached reflection.
    */
-  def create[T <: Entity]()(implicit classTag: ClassTag[T]): T = create(classTag.runtimeClass).asInstanceOf[T]
+  def create[T <: Entity](providedArgs: Any*)(implicit classTag: ClassTag[T]): T = create(classTag.runtimeClass, providedArgs:_*).asInstanceOf[T]
 
   /**
    * Create an entity - via cached reflection.
    */
-  def create(clazz: Class[_]): Entity = {
+  def create(clazz: Class[_], providedArgs: Any*): Entity = {
     val className = clazz.getName
 
     if(!_EntityClazz.isAssignableFrom(clazz))
       throw new IllegalArgumentException(s"You want me to create a entity, but '${_EntityClazz.getName}' is not the super class of your wish: '$className'")
 
     val (im, mApply, args) = _reflApplyCache.synchronized { _reflApplyCache.getOrElseUpdate(className, reflectApplyAndDefaultArgs(clazz)) }
+    val injectArgs = providedArgs ++ args.drop(providedArgs.size)
+
     im
-      .reflectMethod(mApply)(args: _*)
+      .reflectMethod(mApply)(injectArgs: _*)
       .asInstanceOf[Entity]
   }
 
@@ -50,37 +54,8 @@ object Entity {
   private[mvc] def getReflectedApplyWArgNames[T](
     )(implicit classTag: ClassTag[T]): (ru.InstanceMirror, ru.MethodSymbol, List[String]) = {
     _reflApplyArgNameCache.synchronized {
-      _reflApplyArgNameCache.getOrElseUpdate(classTag.runtimeClass, reflectApplyAndArgNames[T]())
+      _reflApplyArgNameCache.getOrElseUpdate(classTag.runtimeClass, CaseClassReflector.reflectApplyAndArgNames(classTag.runtimeClass))
     }
-  }
-
-  /**
-   * Reflect the given class and return default ctor and args - ready to instantiate.
-   */
-  protected def reflectApply(
-    clz: Class[_]
-    ) = {
-    val clazz = cm.classSymbol(clz)
-
-    if (!clazz.isCaseClass)
-      throw new IllegalArgumentException(s"'${clz.getName}' is not a case class")
-
-    val mod = clazz.companion.asModule
-    val im = cm.reflect(cm.reflectModule(mod).instance)
-    val ts = im.symbol.typeSignature
-    val mApply = ts.member(ru.TermName("apply")).asMethod
-
-    (im, mApply, ts)
-  }
-
-  /**
-   * Reflected apply parameter names and a instance mirror to create such a return.
-   */
-  private def reflectApplyAndArgNames[T]()(implicit classTag: ClassTag[T]): (ru.InstanceMirror, ru.MethodSymbol, List[String]) = {
-    val (im, mApply, _) = reflectApply(classTag.runtimeClass)
-    val syms = mApply.paramLists.flatten.map(_.name.toString)
-
-    (im, mApply, syms)
   }
 
   /**
@@ -89,7 +64,7 @@ object Entity {
   protected def reflectApplyAndDefaultArgs(
     clz: Class[_]
     ) = {
-    val (im, mApply, ts) = reflectApply(clz)
+    val (im, mApply, ts) = CaseClassReflector.reflectApply(clz)
     val syms = mApply.paramLists.flatten
     val args = syms.zipWithIndex.map { case (p, i) =>
       val mDef = ts.member(ru.TermName(s"apply$$default$$${i + 1}"))

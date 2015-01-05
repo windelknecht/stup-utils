@@ -115,7 +115,7 @@ abstract class Model[T <: Entity](
   entityId: UUID,
   modelHandler: ActorRef,
   timeoutForDAOAccess: Duration = 10.seconds
-  )(implicit classTag: ClassTag[T])
+  )(implicit classTag: ClassTag[T], typeTag: ru.TypeTag[T])
   extends Dynamic
   with Notify {
   import de.windelknecht.stup.utils.coding.mvc.Model._
