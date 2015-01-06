@@ -56,6 +56,11 @@ object RandomHelper {
   /**
    * Return a new random float.
    */
+  def rndDouble = rnd.nextDouble()
+
+  /**
+   * Return a new random float.
+   */
   def rndFloat = rnd.nextFloat()
 
   /**
@@ -66,5 +71,5 @@ object RandomHelper {
   /**
    * Return a random string with the given length.
    */
-  def rndString(length: Int = 100) = rnd.nextString(length)
+  def rndString(length: Int = 100): String = new String((0 to length).map { i=> rnd.nextPrintableChar() }.toArray)
 }

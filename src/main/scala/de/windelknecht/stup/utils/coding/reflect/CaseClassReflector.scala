@@ -1,5 +1,6 @@
 package de.windelknecht.stup.utils.coding.reflect
 
+import scala.reflect.ClassTag
 import scala.reflect.runtime.{currentMirror => cm, universe => ru}
 
 object CaseClassReflector {
@@ -28,5 +29,22 @@ object CaseClassReflector {
     val syms = mApply.paramLists.flatten.map(_.name.toString)
 
     (im, mApply, syms)
+  }
+
+  /**
+   * Reflect object values (from apply method).
+   */
+  def reflectApplyValues[T](
+    obj: T
+    )(implicit classTag: ClassTag[T]): List[(String, Any)] = {
+    val (instanceMirror, allObjectMembers) = ObjectReflector.reflectedMembersFromObject(obj)
+    val (_, _, applyArgNames) = CaseClassReflector.reflectApplyAndArgNames(obj.getClass)
+
+    applyArgNames
+      .map { i => allObjectMembers.filter(_.isMethod).find(_.name.decodedName.toString == i) }  // find all apply arg method symbols
+      .collect { case Some(x) => x }                                                            // filter out None
+      .map { i => instanceMirror.reflectField(i.asTerm) }                                       // get field
+      .map { i => (i.symbol.name.toString.trim, i.get) }                                        // build a map: (FieldName, FieldValue)
+      .toList
   }
 }
