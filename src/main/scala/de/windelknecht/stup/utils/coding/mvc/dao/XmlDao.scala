@@ -3,7 +3,7 @@ package de.windelknecht.stup.utils.coding.mvc.dao
 import java.util.UUID
 
 import de.windelknecht.stup.utils.coding.mvc.Entity
-import de.windelknecht.stup.utils.coding.reflect.CaseClassReflector
+import de.windelknecht.stup.utils.coding.reflect.{ObjectReflector, CaseClassReflector}
 import de.windelknecht.stup.utils.io.vfs._
 import org.apache.commons.vfs2.{FileType, FileObject}
 
@@ -18,6 +18,7 @@ class NotWritableException(m: String) extends Exception
 class FileContentInvalidException(m: String) extends Exception
 class EntityClassIsUnknown(m: String) extends Exception
 class EntityTypeIsUnknown(m: String) extends Exception
+class FieldClassIsUnknown(m: String) extends Exception
 
 class XmlDao(
   file: FileObject
@@ -27,8 +28,12 @@ class XmlDao(
 
   // fields
   private val ENTITY_LABEL = "entity"
+  private val FIELD_LABEL = "field"
+  private val LISTITEM_LABEL = "item"
   private val CLASSNAME_ATTR = "className"
   private val ID_ATTR = "id"
+  private val TYPE_ATTR = "type"
+  private val NAME_ATTR = "name"
 
   private val _initDone = Promise[String]()
 
@@ -150,33 +155,36 @@ class XmlDao(
    */
   private def deSerializeEntity(node: Node): Entity = {
     val className: String = node \ "@className"
-    val id = UUID.fromString(node \ "@id")
+
+    // get args
+    val args = (node \ "field")
+      .map { i =>
+      val name = (i \ "@name").text
+      val tpe = (i \ "@type").text
+      val value = i.text
+
+      tpe match {
+        case e if e == classOf[java.lang.Byte].getName      => java.lang.Integer.parseInt(value, 10).toByte
+        case e if e == classOf[java.lang.Character].getName => value.charAt(0)
+        case e if e == classOf[java.lang.Double].getName    => java.lang.Double.parseDouble(value)
+        case e if e == classOf[java.lang.Float].getName     => java.lang.Float.parseFloat(value)
+        case e if e == classOf[java.lang.Integer].getName   => java.lang.Integer.parseInt(value, 10)
+        case e if e == classOf[java.lang.Long].getName      => java.lang.Long.parseLong(value)
+
+        case e if e == classOf[String].getName => value
+        case e if e == classOf[UUID].getName   => UUID.fromString(value)
+
+        case e@_ => throw new FieldClassIsUnknown(s"field '$name' if this node (${new PrettyPrinter(80,4).format(node)}) has unknown type")
+      }
+    }
 
     val entity = try {
-      Entity.create(className, id)
+      Entity.create(className, args:_*)
     } catch {
       case e: Exception => throw new EntityClassIsUnknown(s"problems to deSerialize the following node // ${new PrettyPrinter(80, 4).format(node)} (${e.getMessage}})")
     }
 
     entity
-  }
-
-  /**
-   * Return all members of the given object.
-   *
-   * @param data is the object to discover
-   * @param classTag implicit classtag (used for reflection)
-   * @tparam T type parameter
-   * @return class members
-   */
-  private def reflectedMembersFromObject[T](
-    data: T
-    )(implicit classTag: ClassTag[T]): (ru.InstanceMirror, ru.MemberScope) = {
-    val typeMirror = ru.runtimeMirror(data.getClass.getClassLoader)
-    val instanceMirror = typeMirror.reflect(data)
-    val members = instanceMirror.symbol.typeSignature.members
-
-    (instanceMirror, members)
   }
 
   /**
@@ -190,7 +198,7 @@ class XmlDao(
   private def serializeEntity(
     entity: Entity
     ): Node = {
-    <a>{ serializeFields(entity) }</a>.copy(label = ENTITY_LABEL) % Attribute(CLASSNAME_ATTR, Text(entity.getClass.getName), Null) % Attribute(ID_ATTR, Text(entity.id.toString), Null)
+    <a>{ serializeFields(entity) }</a>.copy(label = ENTITY_LABEL) % Attribute(CLASSNAME_ATTR, Text(entity.getClass.getName), Null)
   }
 
   /**
@@ -199,20 +207,28 @@ class XmlDao(
   private def serializeFields(
     entity: Entity
     ): NodeSeq = {
-//    val entityInfo = super.getRuntimeInfo(entity)
-//
-//    if(entityInfo.isEmpty)
-//      throw new EntityTypeIsUnknown(s"could not serialize $entity, because I have no type info")
-//
-    val (instanceMirror, members) = reflectedMembersFromObject(entity)
+    CaseClassReflector
+      .reflectApplyValues(entity)
+      .map { case(name,value) =>
+      value match {
+        case head :: tail => serializeList(entity, name, List(head) ++ tail)
+        case _            => <a>{value}</a>.copy(label = FIELD_LABEL) % Attribute(NAME_ATTR, Text(name), Null) % Attribute(TYPE_ATTR, Text(value.getClass.getName), Null)
+      }
+    }
+  }
 
-    val r1 = members.filter(_.isMethod)
-
-
-    val (im, mApply, smys) = CaseClassReflector.reflectApplyAndArgNames(entity.getClass)
-
-    // map values and names
-
-    NodeSeq.Empty
+  /**
+   * Serialize a complete list.
+   */
+  private def serializeList(
+    entity: Entity,
+    name: String,
+    value: List[Any]
+    ): Node = {
+    ObjectReflector
+      .reflectTypeByMemberName(entity, name) match {
+      case Some(x) => <a>{ value.map { i => <b>{i}</b>.copy(label = LISTITEM_LABEL) } }</a>.copy(label = FIELD_LABEL) % Attribute(NAME_ATTR, Text(name), Null) % Attribute(TYPE_ATTR, Text(x.toString), Null)
+      case None => throw new FieldClassIsUnknown(s"unknown type of field '$name' of this object: '${entity.toString}'")
+    }
   }
 }
