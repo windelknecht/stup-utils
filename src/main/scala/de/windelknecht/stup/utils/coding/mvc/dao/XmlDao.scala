@@ -2,8 +2,9 @@ package de.windelknecht.stup.utils.coding.mvc.dao
 
 import java.util.UUID
 
-import de.windelknecht.stup.utils.coding.mvc.Entity
+import de.windelknecht.stup.utils.coding.mvc.{EntityProtocol, Entity}
 import de.windelknecht.stup.utils.coding.reflect.{ObjectReflector, CaseClassReflector}
+import de.windelknecht.stup.utils.data.serilization.sprayjson.UUIDJsonProtocol
 import de.windelknecht.stup.utils.io.vfs._
 import org.apache.commons.vfs2.{FileType, FileObject}
 
@@ -190,7 +191,41 @@ class XmlDao(
   /**
    * Serialize complete content into xml.
    */
-  private def serialize(): Node = <root>{ read().map(serializeEntity) }</root>
+  import spray.json._
+  import DefaultJsonProtocol._ // if you don't supply your own Protocol (see below)
+
+//  trait UUIDJsonProtocol extends DefaultJsonProtocol {
+//    implicit object UUIDFormat extends JsonFormat[UUID] {
+//      def write(obj: UUID): JsValue = JsString(obj.toString())
+//
+//      def read(json: JsValue): UUID = json match {
+//        case JsString(x) => UUID.fromString(x)
+//        case _ => deserializationError("Expected UUID as JsString")
+//      }
+//    }
+//  }
+//  object UserJsonProtocol extends DefaultJsonProtocol with UUIDJsonProtocol {
+//    implicit val userFormat = jsonFormat3(User)
+//  }
+//  trait B extends DefaultJsonProtocol with UUIDJsonProtocol {
+//    implicit val fooFormat = jsonFormat1(A.apply)
+//  }
+  object A extends EntityProtocol {
+    implicit val fooFormat = jsonFormat1(A.apply)
+  }
+  case class A(id: UUID = UUID.randomUUID()) extends Entity
+
+  private def serialize(): Node = {
+//    val r1 = read().map(_.pickle)
+//    val r3 = read().map(_.toJson)
+
+
+    val z1 = A().toJson
+    val z2 = z1.convertTo[A]
+
+
+    <root>{ read().map(serializeEntity) }</root>
+  }
 
   /**
    * Serialize this entity.
