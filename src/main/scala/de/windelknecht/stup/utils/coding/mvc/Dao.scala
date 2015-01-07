@@ -1,7 +1,5 @@
 package de.windelknecht.stup.utils.coding.mvc
 
-import java.util.UUID
-
 import scala.reflect.ClassTag
 import scala.reflect.runtime.{universe => ru}
 
@@ -34,7 +32,7 @@ trait Dao {
    *
    * @param id id of the entity to remove
    */
-  def delete(id: UUID)
+  def delete(id: String)
 
   /**
    * Search and return the entity with the given id.
@@ -42,7 +40,7 @@ trait Dao {
    * @param id id of the wanted entity
    * @return entity
    */
-  def read(id: UUID): Option[Entity]
+  def read(id: String): Option[Entity]
 
   /**
    * List all entities.
@@ -56,5 +54,5 @@ trait Dao {
    *
    * @param entity entity to update
    */
-  def update[T <: Entity](entity: T)(implicit classTag: ClassTag[T], typeTag: ru.TypeTag[T]): Entity
+  def update[T <: Entity](entity: T): Entity
 }

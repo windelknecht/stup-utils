@@ -48,9 +48,9 @@ object ModelHandler {
 
   trait smhReq extends smhMsg
   case class Create  (className: String) extends smhReq
-  case class Read    (id: UUID)          extends smhReq
+  case class Read    (id: String)        extends smhReq
   case class ReadMore(select: SelectFn)  extends smhReq
-  case class Delete  (id: UUID)          extends smhReq
+  case class Delete  (id: String)        extends smhReq
 
   trait smhRes extends smhMsg
   trait smhCreateRes   extends smhRes
@@ -58,17 +58,17 @@ object ModelHandler {
   trait smhReadRes     extends smhRes
   trait smhReadMoreRes extends smhRes
 
-  case class CreateSuccess(model: SM)             extends smhCreateRes
-  case class CreateFailure(err: String)           extends smhCreateRes
+  case class CreateSuccess(model: SM)               extends smhCreateRes
+  case class CreateFailure(err: String)             extends smhCreateRes
 
-  case class DeleteSuccess(id: UUID)              extends smhDeleteRes
-  case class DeleteFailure(id: UUID, err: String) extends smhDeleteRes
+  case class DeleteSuccess(id: String)              extends smhDeleteRes
+  case class DeleteFailure(id: String, err: String) extends smhDeleteRes
 
-  case class ReadSuccess(model: SM)               extends smhReadRes
-  case class ReadFailure(id: UUID, err: String)   extends smhReadRes
+  case class ReadSuccess(model: SM)                 extends smhReadRes
+  case class ReadFailure(id: String, err: String)   extends smhReadRes
 
-  case class ReadMoreSuccess(select: SelectRes)   extends smhReadMoreRes
-  case class ReadMoreFailure(err: String)         extends smhReadMoreRes
+  case class ReadMoreSuccess(select: SelectRes)     extends smhReadMoreRes
+  case class ReadMoreFailure(err: String)           extends smhReadMoreRes
 
   /**
    * Create a actor reference.
@@ -103,9 +103,9 @@ class ModelHandler(
   implicit val actorSystem = context.system
 
   // fields
-  private val _cachedModels = new mutable.HashMap[UUID, SM]()
+  private val _cachedModels = new mutable.HashMap[String, SM]()
   protected val _uuid = UUID.randomUUID()
-  private val _waitForGC = new mutable.HashMap[UUID, GCObject]()
+  private val _waitForGC = new mutable.HashMap[String, GCObject]()
   private val _gc = new EventEntpreller(
     Map(GCEvent -> (1 seconds)),
     notifier = {
@@ -179,7 +179,7 @@ class ModelHandler(
    */
   protected def delete(
     sender: ActorRef,
-    id: UUID
+    id: String
     ) {
     Future {
       id.synchronized {
@@ -209,7 +209,7 @@ class ModelHandler(
    */
   protected def read(
     sender: ActorRef,
-    id: UUID
+    id: String
     ) {
     Future {
       val msg = read(id)
@@ -328,7 +328,7 @@ class ModelHandler(
    * dieses zurückgegeben und gecacht werden.
    */
   private def prefetchRead(
-    id: UUID
+    id: String
     ): smhReadRes = {
     id.synchronized {
       dao.read(id) match {
@@ -347,7 +347,7 @@ class ModelHandler(
    * Request to return a stup model with an entity (id) underlying.
    * If the stup model is cached, it will be delivered, otherwise a new one is created (and cached).
    */
-  private def read(id: UUID) = {
+  private def read(id: String) = {
     _waitForGC.get(id)
 
     _cachedModels.get(id) match {

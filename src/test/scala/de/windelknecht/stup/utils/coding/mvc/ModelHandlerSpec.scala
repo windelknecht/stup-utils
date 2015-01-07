@@ -9,29 +9,27 @@ import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{WordSpecLike, BeforeAndAfterAll, Matchers}
 import scala.concurrent.duration._
-import scala.reflect.ClassTag
-import scala.reflect.runtime.{universe => ru}
 
 class DaoMock
   extends Dao {
   override def close() = {}
-  override def delete(id: UUID) {}
-  override def read(id: UUID) = None
+  override def delete(id: String) {}
+  override def read(id: String) = None
   override def read() = null
-  override def update[T <: Entity](entity: T)(implicit classTag: ClassTag[T], typeTag: ru.TypeTag[T]) = null
+  override def update[T <: Entity](entity: T) = null
 }
 
 case class mhs_entityMock_simple1(
-  id: UUID = UUID.randomUUID()
+  id: String = UUID.randomUUID().toString
   ) extends Entity
 
 case class mhs_entityMock_simple2(
-  id: UUID = UUID.randomUUID()
+  id: String = UUID.randomUUID().toString
   ) extends Entity
 
 class mhs_modelMock_simple1(
   dao: Dao,
-  entityId: UUID,
+  entityId: String,
   modelHandler: ActorRef
   )
   extends Model[mhs_entityMock_simple1](
@@ -45,7 +43,7 @@ class mhs_modelMock_simple1(
 
 class mhs_modelMock_simple2(
   dao: Dao,
-  entityId: UUID,
+  entityId: String,
   modelHandler: ActorRef
   )
   extends Model[mhs_entityMock_simple2](
@@ -188,7 +186,7 @@ class ModelHandlerSpec
     "the entity exist" should {
       "call the dao" in {
         val m = mock[Dao]
-        val id = UUID.randomUUID()
+        val id =  UUID.randomUUID().toString
 
         when(m.read(id)).thenReturn(Some(mhs_entityMock_simple1(id)))
 
@@ -204,7 +202,7 @@ class ModelHandlerSpec
 
       "return a ReadSuccess" in {
         val m = mock[Dao]
-        val id = UUID.randomUUID()
+        val id =  UUID.randomUUID().toString
 
         when(m.read(id)).thenReturn(Some(mhs_entityMock_simple1(id)))
 
@@ -220,7 +218,7 @@ class ModelHandlerSpec
 
       "return correct ReadSuccess(model: mhs_modelMock_simple1)" in {
         val m = mock[Dao]
-        val id = UUID.randomUUID()
+        val id =  UUID.randomUUID().toString
 
         when(m.read(id)).thenReturn(Some(mhs_entityMock_simple1(id)))
 
@@ -236,7 +234,7 @@ class ModelHandlerSpec
 
       "return correct ReadSuccess(model: mhs_modelMock_simple1.id)" in {
         val m = mock[Dao]
-        val id = UUID.randomUUID()
+        val id =  UUID.randomUUID().toString
 
         when(m.read(id)).thenReturn(Some(mhs_entityMock_simple1(id)))
 
@@ -252,7 +250,7 @@ class ModelHandlerSpec
 
       "return correct ReadSuccess(model: mhs_modelMock_simple1.dao)" in {
         val m = mock[Dao]
-        val id = UUID.randomUUID()
+        val id =  UUID.randomUUID().toString
 
         when(m.read(id)).thenReturn(Some(mhs_entityMock_simple1(id)))
 
@@ -268,7 +266,7 @@ class ModelHandlerSpec
 
       "return correct ReadSuccess(model: mhs_modelMock_simple1.modelHandler)" in {
         val m = mock[Dao]
-        val id = UUID.randomUUID()
+        val id =  UUID.randomUUID().toString
         val actor = ModelHandler.create(m, "de.windelknecht.stup")
 
         when(m.read(id)).thenReturn(Some(mhs_entityMock_simple1(id)))
@@ -283,7 +281,7 @@ class ModelHandlerSpec
     "the entity not exist" should {
       "call the dao" in {
         val m = mock[Dao]
-        val id = UUID.randomUUID()
+        val id =  UUID.randomUUID().toString
 
         when(m.read(id)).thenReturn(None)
 
@@ -299,7 +297,7 @@ class ModelHandlerSpec
 
       "return a ReadFailure" in {
         val m = mock[Dao]
-        val id = UUID.randomUUID()
+        val id =  UUID.randomUUID().toString
 
         when(m.read(id)).thenReturn(None)
 
@@ -315,7 +313,7 @@ class ModelHandlerSpec
 
       "return correct ReadFailure(id, ...)" in {
         val m = mock[Dao]
-        val id = UUID.randomUUID()
+        val id =  UUID.randomUUID().toString
 
         when(m.read(id)).thenReturn(None)
 
@@ -331,7 +329,7 @@ class ModelHandlerSpec
 
       "return correct ReadFailure(..., err)" in {
         val m = mock[Dao]
-        val id = UUID.randomUUID()
+        val id =  UUID.randomUUID().toString
 
         when(m.read(id)).thenReturn(None)
 
@@ -399,7 +397,7 @@ class ModelHandlerSpec
     "the entity exists" should {
       "call the dao" in {
         val dao = mock[Dao]
-        val id = UUID.randomUUID()
+        val id =  UUID.randomUUID().toString
 
         ModelHandler
           .create(
@@ -413,11 +411,11 @@ class ModelHandlerSpec
     }
   }
 
-  private def createReadMoreMock(): (Dao, ActorRef, UUID, UUID, mhs_entityMock_simple1) = {
+  private def createReadMoreMock(): (Dao, ActorRef, String, String, mhs_entityMock_simple1) = {
     val m = mock[Dao]
-    val id1 = UUID.randomUUID()
+    val id1 =  UUID.randomUUID().toString
     val ent1 = mhs_entityMock_simple1(id1)
-    val id2 = UUID.randomUUID()
+    val id2 =  UUID.randomUUID().toString
     val ent2 = mhs_entityMock_simple1(id2)
 
     when(m.read()).thenReturn(List(ent1, ent2))

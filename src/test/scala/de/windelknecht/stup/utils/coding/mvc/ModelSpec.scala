@@ -8,18 +8,18 @@ import org.scalatest.{Matchers, WordSpec}
 import org.scalatest.mock.MockitoSugar
 
 case class ms_entityMock_complex(
-  id: UUID = UUID.randomUUID(),
+  id: String = UUID.randomUUID().toString,
   name: String = "",
   description: String = ""
   ) extends Entity
 
 case class ms_entityMock_simple(
-  id: UUID = UUID.randomUUID()
+  id: String = UUID.randomUUID().toString
   ) extends Entity
 
 class ms_modelMock_complex(
   dao: Dao,
-  entityId: UUID,
+  entityId: String,
   modelHandler: ActorRef
   )
   extends Model[ms_entityMock_complex](
@@ -33,7 +33,7 @@ class ms_modelMock_complex(
 
 class ms_modelMock_simple(
   dao: Dao,
-  entityId: UUID,
+  entityId: String,
   modelHandler: ActorRef
   )
   extends Model[ms_entityMock_simple](
@@ -53,7 +53,7 @@ class ModelSpec
     "the wanted entity exists" should {
       "the dao is called" in {
         val m = mock[Dao]
-        val id = UUID.randomUUID()
+        val id = UUID.randomUUID().toString
 
         when(m.read(id)).thenReturn(Some(ms_entityMock_complex(id)))
 
@@ -65,7 +65,7 @@ class ModelSpec
 
       "thrown an exception when wrong type" in {
         val m = mock[Dao]
-        val id = UUID.randomUUID()
+        val id = UUID.randomUUID().toString
 
         when(m.read(id)).thenReturn(Some(ms_entityMock_simple(id)))
 
@@ -76,7 +76,7 @@ class ModelSpec
     "the wanted entity doesnt exists" should {
       "the dao.read is called" in {
         val m = mock[Dao]
-        val id = UUID.randomUUID()
+        val id = UUID.randomUUID().toString
 
         when(m.read(id)).thenReturn(None)
         when(m.create(classOf[ms_entityMock_complex].getName)).thenReturn(ms_entityMock_complex(id))
@@ -88,7 +88,7 @@ class ModelSpec
 
       "the dao.create is called" in {
         val m = mock[Dao]
-        val id = UUID.randomUUID()
+        val id = UUID.randomUUID().toString
 
         when(m.read(id)).thenReturn(None)
         when(m.create(classOf[ms_entityMock_complex].getName)).thenReturn(ms_entityMock_complex(id))

@@ -1,7 +1,5 @@
 package de.windelknecht.stup.utils.coding.mvc
 
-import java.util.UUID
-
 import akka.actor.{ActorRef, ActorSystem}
 import akka.pattern.ask
 import akka.util.Timeout
@@ -65,7 +63,7 @@ class ModelHandlerFrontend(
    * Delete the given model.
    */
   def delete(
-    id: UUID
+    id: String
     ): smhDeleteRes = {
     _mhActor ! Delete(id)
     try {
@@ -82,7 +80,7 @@ class ModelHandlerFrontend(
    * Read the given id.
    */
   def read(
-    id: UUID
+    id: String
     ): smhReadRes = {
     try {
       Await.result(

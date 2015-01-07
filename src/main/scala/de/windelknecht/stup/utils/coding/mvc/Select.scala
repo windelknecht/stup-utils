@@ -1,7 +1,5 @@
 package de.windelknecht.stup.utils.coding.mvc
 
-import java.util.UUID
-
 import de.windelknecht.stup.utils.coding.mvc.Model.SM
 
 import scala.reflect.ClassTag
@@ -13,7 +11,7 @@ object Select {
     /**
      * Generate from the entity list an list of all ids.
      */
-    def mapAsIds: List[UUID] = list.map(_.id)
+    def mapAsIds: List[String] = list.map(_.id)
 
     /**
      * Generate from the entity list an list with stup models.
@@ -23,7 +21,7 @@ object Select {
 
   trait SelectRes
   case class CountRes    (value:Int)            extends SelectRes
-  case class IdListRes   (value: List[UUID])    extends SelectRes
+  case class IdListRes   (value: List[String])  extends SelectRes
   case class ModelListRes(value: List[_ <: SM]) extends SelectRes
 
   type SelectFn = List[Entity] => ModelHandler => SelectRes

@@ -6,66 +6,66 @@ import de.windelknecht.stup.utils.tools.RandomHelper
 import org.scalatest.{Matchers, WordSpec}
 
 class mock_simpleClass(
-  val id: UUID
+  val id: String
   ) extends Entity
 
 case class mock_simpleCaseClass_1Arg(
-  id: UUID
+  id: String
   ) extends Entity
 
 case class mock_simpleCaseClass_1Arg1Def(
-  id: UUID = UUID.randomUUID()
+  id: String = UUID.randomUUID().toString
   ) extends Entity
 
 case class mock_simpleCaseClass_2Arg(
-  id: UUID,
+  id: String,
   v1: Int
   ) extends Entity
 
 case class mock_simpleCaseClass_2Arg1Def(
-  id: UUID = UUID.randomUUID(),
+  id: String = UUID.randomUUID().toString,
   v1: Int
   ) extends Entity
 
-case class mock_simpleCaseClass_Char(id: UUID, v1: Char) extends Entity
-case class mock_simpleCaseClass_CharJ(id: UUID, v1: java.lang.Character) extends Entity
-case class mock_simpleCaseClass_CharS(id: UUID, v1: scala.Char) extends Entity
+case class mock_simpleCaseClass_Char(id: String, v1: Char) extends Entity
+case class mock_simpleCaseClass_CharJ(id: String, v1: java.lang.Character) extends Entity
+case class mock_simpleCaseClass_CharS(id: String, v1: scala.Char) extends Entity
 
-case class mock_simpleCaseClass_Bool(id: UUID, v1: Boolean) extends Entity
-case class mock_simpleCaseClass_BoolJ(id: UUID, v1: java.lang.Boolean) extends Entity
-case class mock_simpleCaseClass_BoolS(id: UUID, v1: scala.Boolean) extends Entity
+case class mock_simpleCaseClass_Bool(id: String, v1: Boolean) extends Entity
+case class mock_simpleCaseClass_BoolJ(id: String, v1: java.lang.Boolean) extends Entity
+case class mock_simpleCaseClass_BoolS(id: String, v1: scala.Boolean) extends Entity
 
-case class mock_simpleCaseClass_Byte(id: UUID, v1: Byte) extends Entity
-case class mock_simpleCaseClass_ByteJ(id: UUID, v1: java.lang.Byte) extends Entity
-case class mock_simpleCaseClass_ByteS(id: UUID, v1: scala.Byte) extends Entity
+case class mock_simpleCaseClass_Byte(id: String, v1: Byte) extends Entity
+case class mock_simpleCaseClass_ByteJ(id: String, v1: java.lang.Byte) extends Entity
+case class mock_simpleCaseClass_ByteS(id: String, v1: scala.Byte) extends Entity
 
-case class mock_simpleCaseClass_Double(id: UUID, v1: Double) extends Entity
-case class mock_simpleCaseClass_DoubleJ(id: UUID, v1: java.lang.Double) extends Entity
-case class mock_simpleCaseClass_DoubleS(id: UUID, v1: scala.Double) extends Entity
+case class mock_simpleCaseClass_Double(id: String, v1: Double) extends Entity
+case class mock_simpleCaseClass_DoubleJ(id: String, v1: java.lang.Double) extends Entity
+case class mock_simpleCaseClass_DoubleS(id: String, v1: scala.Double) extends Entity
 
-case class mock_simpleCaseClass_Float(id: UUID, v1: Float) extends Entity
-case class mock_simpleCaseClass_FloatJ(id: UUID, v1: java.lang.Float) extends Entity
-case class mock_simpleCaseClass_FloatS(id: UUID, v1: scala.Float) extends Entity
+case class mock_simpleCaseClass_Float(id: String, v1: Float) extends Entity
+case class mock_simpleCaseClass_FloatJ(id: String, v1: java.lang.Float) extends Entity
+case class mock_simpleCaseClass_FloatS(id: String, v1: scala.Float) extends Entity
 
-case class mock_simpleCaseClass_Int(id: UUID, v1: Int) extends Entity
-case class mock_simpleCaseClass_IntJ(id: UUID, v1: java.lang.Integer) extends Entity
-case class mock_simpleCaseClass_IntS(id: UUID, v1: scala.Int) extends Entity
+case class mock_simpleCaseClass_Int(id: String, v1: Int) extends Entity
+case class mock_simpleCaseClass_IntJ(id: String, v1: java.lang.Integer) extends Entity
+case class mock_simpleCaseClass_IntS(id: String, v1: scala.Int) extends Entity
 
-case class mock_simpleCaseClass_Long(id: UUID, v1: Long) extends Entity
-case class mock_simpleCaseClass_LongJ(id: UUID, v1: java.lang.Long) extends Entity
-case class mock_simpleCaseClass_LongS(id: UUID, v1: scala.Long) extends Entity
+case class mock_simpleCaseClass_Long(id: String, v1: Long) extends Entity
+case class mock_simpleCaseClass_LongJ(id: String, v1: java.lang.Long) extends Entity
+case class mock_simpleCaseClass_LongS(id: String, v1: scala.Long) extends Entity
 
-case class mock_simpleCaseClass_Short(id: UUID, v1: Short) extends Entity
-case class mock_simpleCaseClass_ShortJ(id: UUID, v1: java.lang.Short) extends Entity
-case class mock_simpleCaseClass_ShortS(id: UUID, v1: scala.Short) extends Entity
+case class mock_simpleCaseClass_Short(id: String, v1: Short) extends Entity
+case class mock_simpleCaseClass_ShortJ(id: String, v1: java.lang.Short) extends Entity
+case class mock_simpleCaseClass_ShortS(id: String, v1: scala.Short) extends Entity
 
-case class mock_simpleCaseClass_String(id: UUID, v1: String) extends Entity
-case class mock_simpleCaseClass_StringJ(id: UUID, v1: java.lang.String) extends Entity
+case class mock_simpleCaseClass_String(id: String, v1: String) extends Entity
+case class mock_simpleCaseClass_StringJ(id: String, v1: java.lang.String) extends Entity
 
-case class mock_simpleCaseClass_Option(id: UUID, v1: Option[String]) extends Entity
+case class mock_simpleCaseClass_Option(id: String, v1: Option[String]) extends Entity
 
 case class mock_simpleCaseClass_notFromEntity(
-  id: UUID = UUID.randomUUID(),
+  id: String = UUID.randomUUID().toString,
   v1: Int
   )
 
@@ -347,7 +347,7 @@ class EntitySpec
   "using method 'create(String, ...) with provided arguments (Entity with 1 field)" when {
     "given args are correct" should {
       "the 1 and only argument should be injected" in {
-        val id = UUID.randomUUID()
+        val id = UUID.randomUUID().toString
 
         Entity.create(classOf[mock_simpleCaseClass_1Arg], id).id should be (id)
       }
@@ -364,24 +364,24 @@ class EntitySpec
   "using method 'create(String, ...) with provided arguments (Entity with 2 fields)" when {
     "given args are correct" should {
       "1st argument should be injected" in {
-        val id = UUID.randomUUID()
+        val id = UUID.randomUUID().toString
         Entity.create(classOf[mock_simpleCaseClass_2Arg], id, RandomHelper.rndInt()).id should be (id)
       }
 
       "2nd argument should be injected" in {
         val int = RandomHelper.rndInt()
-        Entity.create(classOf[mock_simpleCaseClass_2Arg], UUID.randomUUID(), int).asInstanceOf[mock_simpleCaseClass_2Arg].v1 should be (int)
+        Entity.create(classOf[mock_simpleCaseClass_2Arg], UUID.randomUUID().toString, int).asInstanceOf[mock_simpleCaseClass_2Arg].v1 should be (int)
       }
     }
 
     "only 1 arg is provided" should {
       "1st argument should be injected" in {
-        val id = UUID.randomUUID()
+        val id = UUID.randomUUID().toString
         Entity.create(classOf[mock_simpleCaseClass_2Arg], id).id should be (id)
       }
 
       "2nd argument has default value" in {
-        Entity.create(classOf[mock_simpleCaseClass_2Arg], UUID.randomUUID()).asInstanceOf[mock_simpleCaseClass_2Arg].v1 should be (0)
+        Entity.create(classOf[mock_simpleCaseClass_2Arg], UUID.randomUUID().toString).asInstanceOf[mock_simpleCaseClass_2Arg].v1 should be (0)
       }
     }
   }

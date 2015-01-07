@@ -3,8 +3,6 @@ package de.windelknecht.stup.utils.coding.mvc
 import java.util.UUID
 
 import de.windelknecht.stup.utils.coding.reflect.CaseClassReflector
-import de.windelknecht.stup.utils.data.serilization.sprayjson.UUIDJsonProtocol
-import spray.json.DefaultJsonProtocol
 
 import scala.collection.mutable
 import scala.reflect.ClassTag
@@ -126,20 +124,5 @@ object Entity {
 }
 
 trait Entity {
-  def id: UUID
+  def id: String
 }
-
-/**
- * This must be implemented by an entity class in this manner:
- *
- * <code>
- *    object A extends EntityProtocol {
- *      implicit val fooFormat = jsonFormat1(A.apply)
- *    }
- *
- *    case class A(id: UUID) extends Entity
- * </code>
- */
-trait EntityProtocol
-  extends DefaultJsonProtocol
-  with UUIDJsonProtocol

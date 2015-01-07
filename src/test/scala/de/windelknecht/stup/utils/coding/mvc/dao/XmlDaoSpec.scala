@@ -84,7 +84,7 @@ class XmlDaoSpec
         val ent = Entity_onlyId()
         val file = VFS.getManager.resolveFile(s"ram://XmlDaoSpec/${UUID.randomUUID()}.xml")
         val xml = <root>
-          { <entity><field name="id" type="java.util.UUID">{ ent.id.toString }</field></entity> % Attribute("className", Text(ent.getClass.getName), Null) }
+          { <entity><field name="id" type="java.lang.String">{ ent.id }</field></entity> % Attribute("className", Text(ent.getClass.getName), Null) }
         </root>
 
         file.createFile()
@@ -123,7 +123,7 @@ class XmlDaoSpec
         val ent = List(Entity_onlyId(), Entity_onlyId())
         val file = VFS.getManager.resolveFile(s"ram://XmlDaoSpec/${UUID.randomUUID()}.xml")
         val xml = <root>
-          { ent.map { case e: Entity_onlyId => <entity><field name="id" type="java.util.UUID">{ e.id.toString }</field></entity> % Attribute("className", Text(e.getClass.getName), Null) }}
+          { ent.map { case e: Entity_onlyId => <entity><field name="id" type="java.lang.String">{ e.id }</field></entity> % Attribute("className", Text(e.getClass.getName), Null) }}
         </root>
 
         file.createFile()
@@ -173,7 +173,7 @@ class XmlDaoSpec
 
       "entity node has correct child node 'field@id'" in {
         val (node, ent) = createAndClose_Entity_onlyId()
-        UUID.fromString((node \ "field")(0).text) should be (ent.id)
+        (node \ "field")(0).text should be (ent.id)
       }
 
       "entity node has correct child count" in {

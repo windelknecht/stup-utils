@@ -1,7 +1,5 @@
 package de.windelknecht.stup.utils.coding.mvc.dao
 
-import java.util.UUID
-
 import de.windelknecht.stup.utils.coding.mvc.{Dao, Entity}
 
 import scala.collection.mutable
@@ -13,8 +11,7 @@ class MemoryDao
   case class EntityInfo[T <: Entity](classTag: ClassTag[T], typeTag: ru.TypeTag[T])
 
   // fields
-  private val _cache = new mutable.HashMap[UUID, Entity]()
-  private val _typeCache = new mutable.HashMap[UUID, EntityInfo[_]]()
+  private val _cache = new mutable.HashMap[String, Entity]()
 
   /**
    * Close data source.
@@ -26,10 +23,7 @@ class MemoryDao
    *
    * @param id id of the entity to remove
    */
-  override def delete(id: UUID) = _cache.synchronized {
-    _cache -= id
-    _typeCache -= id
-  }
+  override def delete(id: String) = _cache.synchronized { _cache -= id }
 
   /**
    * Search and return the entity with the given id.
@@ -37,7 +31,7 @@ class MemoryDao
    * @param id id of the wanted entity
    * @return entity
    */
-  override def read(id: UUID) = _cache.synchronized { _cache.get(id) }
+  override def read(id: String) = _cache.synchronized { _cache.get(id) }
 
   /**
    * List all entities.
@@ -51,16 +45,11 @@ class MemoryDao
    *
    * @param entity entity to update
    */
-  override def update[T <: Entity](entity: T)(implicit classTag: ClassTag[T], typeTag: ru.TypeTag[T]) = {
+  override def update[T <: Entity](entity: T) = {
     _cache.synchronized {
       _cache += (entity.id -> entity)
-      _typeCache += (entity.id -> EntityInfo(classTag, typeTag))
     }
 
     entity
   }
-
-  protected def getRuntimeInfo[T <: Entity](
-    entity: T
-    ): Option[EntityInfo[T]] = _typeCache.get(entity.id).asInstanceOf[Option[EntityInfo[T]]]
 }

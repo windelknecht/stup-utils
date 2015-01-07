@@ -28,6 +28,7 @@ object build extends Build {
         ++= Seq(
           "org.scala-lang"                % "scala-library"           % scalaVer                  withSources(),
           "org.scala-lang"                % "scala-reflect"           % scalaVer                  withSources(),
+          "org.scala-lang"               %% "scala-pickling"          % "0.9.1"                   withSources(),
           "org.scala-lang.modules"       %% "scala-xml"               % "1.0.3"                   withSources(),
           "com.typesafe.akka"            %% "akka-actor"              % "2.3.8"                   withSources(),
           // apache
@@ -37,8 +38,6 @@ object build extends Build {
           "org.clapper"                  %% "grizzled-slf4j"          % "1.0.2"                   withSources(),
           // refl
           "org.reflections"               % "reflections"             % "0.9.9"                   withSources(),
-          // serialization
-          "io.spray"                     %% "spray-json"              % "1.3.1"                   withSources(),
           // testing
           "org.scalatest"                %% "scalatest"               % "2.2.3"     % "test"      withSources(),
           "com.typesafe.akka"            %% "akka-testkit"            % "2.3.8"     % "test"      withSources(),

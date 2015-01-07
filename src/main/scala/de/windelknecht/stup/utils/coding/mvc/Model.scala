@@ -69,7 +69,7 @@ object Model {
    * Return ctor with our stup model signature.
    */
   @throws[NoSuchMethodException]
-  private def getCtor(clazz: Class[_ <: SM]): Constructor[_ <: SM] = clazz.getConstructor(classOf[Dao], classOf[UUID], classOf[ActorRef])
+  private def getCtor(clazz: Class[_ <: SM]): Constructor[_ <: SM] = clazz.getConstructor(classOf[Dao], classOf[String], classOf[ActorRef])
 
   /**
    * Searches all subclasses of Model in the given path.
@@ -112,7 +112,7 @@ object Model {
 
 abstract class Model[T <: Entity](
   dao: Dao,
-  entityId: UUID,
+  entityId: String,
   modelHandler: ActorRef,
   timeoutForDAOAccess: Duration = 10.seconds
   )(implicit classTag: ClassTag[T], typeTag: ru.TypeTag[T])
@@ -292,13 +292,13 @@ abstract class Model[T <: Entity](
    * Load a model with the given id from model handler.
    * Can be used to provide an easy access to parent or sub model.
    */
-  protected def loadModel(id: UUID): Future[smhReadRes] = (modelHandler ? ModelHandler.Read(id)).mapTo[smhReadRes]
+  protected def loadModel(id: String): Future[smhReadRes] = (modelHandler ? ModelHandler.Read(id)).mapTo[smhReadRes]
 
   /**
    * Load a model with the given id from model handler.
    * Can be used to provide an easy access to parent or sub model.
    */
-  protected def loadModel(id: Option[UUID]): Option[Future[smhReadRes]] = {
+  protected def loadModel(id: Option[String]): Option[Future[smhReadRes]] = {
     id match {
       case Some(x) => Some(loadModel(x))
       case None => None
