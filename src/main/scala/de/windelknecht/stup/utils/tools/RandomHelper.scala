@@ -66,7 +66,7 @@ object RandomHelper {
   /**
    * Return a new random int with upper and lower bounds.
    */
-  def rndInt(lower: Int = 0, upper: Int = Int.MaxValue) = rnd.nextInt(upper - lower) + lower
+  def rndInt(lower: Int = 1, upper: Int = Int.MaxValue) = rnd.nextInt(upper - lower) + lower
 
   /**
    * Return a random string with the given length.

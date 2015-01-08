@@ -7,6 +7,9 @@ import de.windelknecht.stup.utils.io.vfs._
 
 import scala.pickling._, json._
 
+class NotAFileException(m: String) extends Exception
+class NotWritableException(m: String) extends Exception
+
 class JsonDao(
   file: FileObject
   )
