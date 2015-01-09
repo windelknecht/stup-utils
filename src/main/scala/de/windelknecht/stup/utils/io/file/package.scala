@@ -102,7 +102,7 @@ package object file {
     /**
      * Print the given string into the file.
      */
-    private def writer(s: String, p: PrintWriter) = p.println(s)
+    private def writer(s: String, p: PrintWriter) = p.print(s)
 
     /**
      * Write something to file.

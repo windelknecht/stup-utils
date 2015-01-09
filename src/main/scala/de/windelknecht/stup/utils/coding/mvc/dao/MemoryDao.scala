@@ -14,11 +14,6 @@ class MemoryDao
   private val _cache = new mutable.HashMap[String, Entity]()
 
   /**
-   * Close data source.
-   */
-  override def close() = {}
-
-  /**
    * Remove the entity with the given id from the data set.
    *
    * @param id id of the entity to remove

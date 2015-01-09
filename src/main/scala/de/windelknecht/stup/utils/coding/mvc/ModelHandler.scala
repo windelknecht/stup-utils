@@ -127,7 +127,11 @@ class ModelHandler(
    */
   protected def shutdown() = {
     _gc.shutdown()
-    dao.close()
+
+    dao match {
+      case e: DaoIsCloseable => e.close()
+      case _ =>
+    }
 
     context stop self
   }

@@ -1,14 +1,15 @@
 package de.windelknecht.stup.utils.coding.mvc
 
 import scala.reflect.ClassTag
-import scala.reflect.runtime.{universe => ru}
+
+trait DaoIsCloseable {
+  /**
+   * Dao will be closed (and saved)
+   */
+  def close(): Unit
+}
 
 trait Dao {
-  /**
-   * Close data source.
-   */
-  def close()
-
   /**
    * Create an entity - via cached reflection.
    * The new entity is NOT added to the data set.

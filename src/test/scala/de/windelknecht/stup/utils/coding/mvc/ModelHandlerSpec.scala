@@ -12,7 +12,6 @@ import scala.concurrent.duration._
 
 class DaoMock
   extends Dao {
-  override def close() = {}
   override def delete(id: String) {}
   override def read(id: String) = None
   override def read() = null

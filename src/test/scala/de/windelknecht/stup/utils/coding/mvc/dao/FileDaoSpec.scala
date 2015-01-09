@@ -3,12 +3,17 @@ package de.windelknecht.stup.utils.coding.mvc.dao
 import java.util.UUID
 
 import de.windelknecht.stup.utils.coding.mvc.Entity
+import de.windelknecht.stup.utils.coding.mvc.dao.serialize.{JsonDaoDeSerializer, JsonDaoSerializer}
 import de.windelknecht.stup.utils.coding.mvc.entities.{Entity_moreListString, Entity_moreComplex, Entity_moreSimple, Entity_onlyId}
 import de.windelknecht.stup.utils.tools.RandomHelper
 import org.apache.commons.vfs2.{VFS, FileObject}
 import org.scalatest.{Matchers, WordSpec}
 
-class JsonDaoSpec
+class JsonDao(
+  file: FileObject
+  ) extends FileDao(file = file, serializer = new JsonDaoSerializer, deSerializer = new JsonDaoDeSerializer)
+
+class FileDaoSpec
   extends WordSpec
   with Matchers {
   "JsonDao after saving" when {
